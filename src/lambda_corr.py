@@ -76,7 +76,7 @@ Created on Wed Oct  8 19:56:06 2025
         The procedure will terminate earlier if the p-value uncertainty falls 
         below p_tol. 
     
-    alt : {"two-sided", "one-sided", "greater", "less"}, optional
+    alt : {"two-sided", "greater", "less"}, optional
         Alternative hypothesis relative to the null of zero monotonic association. 
         Default: "two-sided".
         - "two-sided": Probability of observing |Λ| as large or larger than |Λ_obs| 
