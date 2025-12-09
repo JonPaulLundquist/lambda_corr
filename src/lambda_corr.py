@@ -32,11 +32,11 @@ Created on Wed Oct  8 19:56:06 2025
         rxt = (rx - mean(rx)) / std(rx)
         ryt = (ry - mean(ry)) / std(ry)
 
-    For each anchor i, compute the median slope in rank space:
+    For each anchor sample i, compute the median slope in rank space:
 
         b_i = median_{j != i, rxt[j] != rxt[i]} ( (ryt[j] - ryt[i]) / (rxt[j] - rxt[i]) )
 
-    The asymmetric Lambda is the outer mean:
+    The asymmetric Lambda is the outer mean over i slopes:
 
         Lambda_xy = (1/n) * sum_i b_i
 
@@ -52,36 +52,39 @@ Created on Wed Oct  8 19:56:06 2025
         Two input samples of equal length (n ≥ 3).
     
     pvals : {True, False}, optional
-        Flag for p-value calculation. Default: True.
+        Whether to compute p-values. Default: True.
         If False, all returned p-values are NaN and no permutation/asymptotic
         p-value calculations are performed.
 
     ptype : {"default", "asymp", "perm"}, optional
-        Type of p-value calculation. Default: "default".
-        - "default": If n < 25 do permutation calculation. 
-                     If n ≥ 25 use asymptotic approximation.
-        - "asymp": Use asymptotic approximation. Assumes no ties. 
-                   The more ties the less accurate.
-        - "perm": Calculates p-value using permutations. 
-                  Valid with any fraction of ties.
+        Method for p-value calculation. Default: "default".
+        - "default": If n < 25, use a Monte Carlo permutation test. 
+                     If n ≥ 25, use asymptotic approximation.
+        - "asymp": Use asymptotic approximation. Assumes no ties; accuracy
+                   decreases as tie frequency increases.
+        - "perm": Use Monte Carlo permutation test. Valid for any tie structure. 
+                  Note: An approximation unless all permutations are
+                  enumerated, which is only feasible for very small n.
     
     p_tol : float, optional
-        If uncertainty on p-value is less than p_tol stop permutation calculation. 
-        Default: 1e-5.
+        Uncertainty tolerance for the Monte Carlo permutation test. Default: 1e-5.
+        If p-value uncertainty falls below p_tol the permutation sampling stops 
+        early (will terminate earlier if n_perm is exceeded). 
     
     n_perm : integer, optional
-        Maximum number of Monte Carlo permutations for p-value estimation. Default: 1e4.
-        Estimation will terminate earlier if the p-value uncertainty falls below p_tol. 
+        Maximum number of MC permutations used for p-value estimation. Default: 10000.
+        The procedure will terminate earlier if the p-value uncertainty falls 
+        below p_tol. 
     
-    alt : {"two-sided", "greater", "less"}, optional
-        Alternative hypothesis relative to the null of no correlation. 
+    alt : {"two-sided", "one-sided", "greater", "less"}, optional
+        Alternative hypothesis relative to the null of zero monotonic association. 
         Default: "two-sided".
-        - "two-sided": Probability of getting larger magnitude Λ ([-1, 1]) with population 
-        correlation of zero.
-        - "greater": Probability of getting a greater Λ ([Λ, 1]) with population 
-        correlation of zero.
-        - "less": Probability of getting a smaller Λ ([-1, Λ]) with population correlation
-        of zero.
+        - "two-sided": Probability of observing |Λ| as large or larger than |Λ_obs| 
+                       ([-1, 1]) under the null (population Λ of zero).
+        - "greater": Probability of observing Λ ≥ Λ_obs (upper tail, [Λ_obs, 1])
+                     under the null (population Λ of zero).
+        - "less": Probability of observing Λ ≤ Λ_obs ([-1, Λ_obs]) under the null 
+                  (population Λ of zero).
 
     Returns
     -------
@@ -372,7 +375,7 @@ def _check_stop(h, p_tol, N):
 #Numba parallelized p-value permutation test
 @njit(cache=True, nogil=True, inline='always', parallel=True)
 def _lambda_pvals(rx, ry, n, Lambda_s, Lambda_xy, Lambda_yx, p_tol = 1e-5, 
-                  n_perm=1e4, alt="two-sided"):
+                  n_perm=10000, alt="two-sided"):
     # ---- Permutation test ----
 
     c_s = 0
@@ -386,11 +389,11 @@ def _lambda_pvals(rx, ry, n, Lambda_s, Lambda_xy, Lambda_yx, p_tol = 1e-5,
             hit_s = (abs(l_b) >= abs(Lambda_s))
             hit_xy = (abs(Lambda_xy_b) >= abs(Lambda_xy))
             hit_yx = (abs(Lambda_yx_b) >= abs(Lambda_yx))
-        elif alt == "greater":
+        elif (alt == "greater"):
             hit_s = (l_b >= Lambda_s)
             hit_xy = (Lambda_xy_b >= Lambda_xy)
             hit_yx = (Lambda_yx_b >= Lambda_yx)
-        else:
+        else: #alt == less
             hit_s = (l_b <= Lambda_s)
             hit_xy = (Lambda_xy_b <= Lambda_xy)
             hit_yx = (Lambda_yx_b <= Lambda_yx)
@@ -435,15 +438,23 @@ def _lambda_p_asymptotic(Lambda_s, n, alt="two-sided"):
 
     P_z = max(0.0, min(1.0, P_z))
     
-    if alt == "greater": return 1.0 - P_z
-    if alt == "less":    return P_z
-    if z >= 0:
-        return 2.0 * (1.0 - P_z)
+    if alt == "two-sided":
+        if z >= 0.0:
+            return 2.0 * (1.0 - P_z)
+        else:
+            return 2.0 * P_z
+
+    elif (alt == "greater"):
+        # Upper tail: P(Λ ≥ Λ_obs)
+        return 1.0 - P_z
+
     else:
-        return 2.0 * P_z
+        # alt == "less": Lower tail: P(Λ ≤ Λ_obs)
+        return P_z
+
 
 @njit(cache=True, nogil=True)
-def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-5, n_perm=1e4, alt="two-sided"):
+def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-5, n_perm=10000, alt="two-sided"):
     
     x = np.asarray(x)
     y = np.asarray(y)
