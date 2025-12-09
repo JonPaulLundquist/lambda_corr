@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.egg-info/
+.build/
+dist/
+build/
+
+# Virtual envs
+.venv/
+venv/
+
+# Jupyter & caches
+.ipynb_checkpoints/
+.pytest_cache/
+

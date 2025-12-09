@@ -1,0 +1,107 @@
+=== Bias (means & bias vs true ρ; plus bias vs theoretical Expectation) ===
+{'rho': 0, 'n': 50, 'Lambda_S_mean': 0.0006, 'Spearman_mean': 0.0004, 'Kendall_mean': 0.0003, 'Pearson_mean': 0.0002, 'Lambda_S_bias': 0.0006, 'Spearman_bias': 0.0004, 'Kendall_bias': 0.0003, 'Pearson_bias': 0.0002, 'Spearman_bias_vs_E': 0.0004, 'Kendall_bias_vs_E': 0.0003}
+{'rho': 0.1, 'n': 50, 'Lambda_S_mean': 0.1, 'Spearman_mean': 0.0938, 'Kendall_mean': 0.0639, 'Pearson_mean': 0.099, 'Lambda_S_bias': 0.0, 'Spearman_bias': -0.0062, 'Kendall_bias': -0.0361, 'Pearson_bias': -0.001, 'Spearman_bias_vs_E': -0.0017, 'Kendall_bias_vs_E': 0.0001}
+{'rho': 0.2, 'n': 50, 'Lambda_S_mean': 0.1985, 'Spearman_mean': 0.1867, 'Kendall_mean': 0.1275, 'Pearson_mean': 0.1972, 'Lambda_S_bias': -0.0015, 'Spearman_bias': -0.0133, 'Kendall_bias': -0.0725, 'Pearson_bias': -0.0028, 'Spearman_bias_vs_E': -0.0046, 'Kendall_bias_vs_E': -0.0006}
+{'rho': 0.3, 'n': 50, 'Lambda_S_mean': 0.2991, 'Spearman_mean': 0.2826, 'Kendall_mean': 0.1943, 'Pearson_mean': 0.298, 'Lambda_S_bias': -0.0009, 'Spearman_bias': -0.0174, 'Kendall_bias': -0.1057, 'Pearson_bias': -0.002, 'Spearman_bias_vs_E': -0.005, 'Kendall_bias_vs_E': 0.0004}
+{'rho': 0.4, 'n': 50, 'Lambda_S_mean': 0.3973, 'Spearman_mean': 0.377, 'Kendall_mean': 0.2617, 'Pearson_mean': 0.3963, 'Lambda_S_bias': -0.0027, 'Spearman_bias': -0.023, 'Kendall_bias': -0.1383, 'Pearson_bias': -0.0037, 'Spearman_bias_vs_E': -0.0076, 'Kendall_bias_vs_E': -0.0003}
+{'rho': 0.5, 'n': 50, 'Lambda_S_mean': 0.4957, 'Spearman_mean': 0.4735, 'Kendall_mean': 0.3331, 'Pearson_mean': 0.4959, 'Lambda_S_bias': -0.0043, 'Spearman_bias': -0.0265, 'Kendall_bias': -0.1669, 'Pearson_bias': -0.0041, 'Spearman_bias_vs_E': -0.009, 'Kendall_bias_vs_E': -0.0003}
+{'rho': 0.6, 'n': 50, 'Lambda_S_mean': 0.5935, 'Spearman_mean': 0.5709, 'Kendall_mean': 0.4089, 'Pearson_mean': 0.5953, 'Lambda_S_bias': -0.0065, 'Spearman_bias': -0.0291, 'Kendall_bias': -0.1911, 'Pearson_bias': -0.0047, 'Spearman_bias_vs_E': -0.011, 'Kendall_bias_vs_E': -0.0007}
+{'rho': 0.7, 'n': 50, 'Lambda_S_mean': 0.6926, 'Spearman_mean': 0.6713, 'Kendall_mean': 0.4933, 'Pearson_mean': 0.696, 'Lambda_S_bias': -0.0074, 'Spearman_bias': -0.0287, 'Kendall_bias': -0.2067, 'Pearson_bias': -0.004, 'Spearman_bias_vs_E': -0.0116, 'Kendall_bias_vs_E': -0.0003}
+{'rho': 0.8, 'n': 50, 'Lambda_S_mean': 0.7922, 'Spearman_mean': 0.7743, 'Kendall_mean': 0.5903, 'Pearson_mean': 0.797, 'Lambda_S_bias': -0.0078, 'Spearman_bias': -0.0257, 'Kendall_bias': -0.2097, 'Pearson_bias': -0.003, 'Spearman_bias_vs_E': -0.0116, 'Kendall_bias_vs_E': -0.0001}
+{'rho': 0.85, 'n': 50, 'Lambda_S_mean': 0.8426, 'Spearman_mean': 0.8271, 'Kendall_mean': 0.6469, 'Pearson_mean': 0.8475, 'Lambda_S_bias': -0.0074, 'Spearman_bias': -0.0229, 'Kendall_bias': -0.2031, 'Pearson_bias': -0.0025, 'Spearman_bias_vs_E': -0.0112, 'Kendall_bias_vs_E': 0.0001}
+{'rho': 0.9, 'n': 50, 'Lambda_S_mean': 0.8933, 'Spearman_mean': 0.881, 'Kendall_mean': 0.7128, 'Pearson_mean': 0.8982, 'Lambda_S_bias': -0.0067, 'Spearman_bias': -0.019, 'Kendall_bias': -0.1872, 'Pearson_bias': -0.0018, 'Spearman_bias_vs_E': -0.0105, 'Kendall_bias_vs_E': -0.0}
+{'rho': 0.95, 'n': 50, 'Lambda_S_mean': 0.9449, 'Spearman_mean': 0.9367, 'Kendall_mean': 0.798, 'Pearson_mean': 0.9491, 'Lambda_S_bias': -0.0051, 'Spearman_bias': -0.0133, 'Kendall_bias': -0.152, 'Pearson_bias': -0.0009, 'Spearman_bias_vs_E': -0.0086, 'Kendall_bias_vs_E': 0.0001}
+
+=== Efficiency (variance; relative efficiency vs Pearson) ===
+{'rho': 0, 'n': 50, 'Lambda_S_var': 0.0263, 'Spearman_var': 0.0204, 'Kendall_var': 0.0095, 'Pearson_var': 0.0203, 'Lambda_S_eff_vs_P': 0.7748, 'Spearman_eff_vs_P': 0.9998, 'Kendall_eff_vs_P': 2.1426}
+{'rho': 0.1, 'n': 50, 'Lambda_S_var': 0.0262, 'Spearman_var': 0.0204, 'Kendall_var': 0.0096, 'Pearson_var': 0.0201, 'Lambda_S_eff_vs_P': 0.7692, 'Spearman_eff_vs_P': 0.9891, 'Kendall_eff_vs_P': 2.1053}
+{'rho': 0.2, 'n': 50, 'Lambda_S_var': 0.0244, 'Spearman_var': 0.0193, 'Kendall_var': 0.0092, 'Pearson_var': 0.0189, 'Lambda_S_eff_vs_P': 0.7764, 'Spearman_eff_vs_P': 0.9802, 'Kendall_eff_vs_P': 2.0484}
+{'rho': 0.3, 'n': 50, 'Lambda_S_var': 0.0217, 'Spearman_var': 0.0176, 'Kendall_var': 0.0087, 'Pearson_var': 0.017, 'Lambda_S_eff_vs_P': 0.7835, 'Spearman_eff_vs_P': 0.9633, 'Kendall_eff_vs_P': 1.9473}
+{'rho': 0.4, 'n': 50, 'Lambda_S_var': 0.0186, 'Spearman_var': 0.0158, 'Kendall_var': 0.0082, 'Pearson_var': 0.0148, 'Lambda_S_eff_vs_P': 0.7937, 'Spearman_eff_vs_P': 0.9344, 'Kendall_eff_vs_P': 1.7906}
+{'rho': 0.5, 'n': 50, 'Lambda_S_var': 0.015, 'Spearman_var': 0.0132, 'Kendall_var': 0.0074, 'Pearson_var': 0.0118, 'Lambda_S_eff_vs_P': 0.7868, 'Spearman_eff_vs_P': 0.8906, 'Kendall_eff_vs_P': 1.5845}
+{'rho': 0.6, 'n': 50, 'Lambda_S_var': 0.0111, 'Spearman_var': 0.0102, 'Kendall_var': 0.0064, 'Pearson_var': 0.0086, 'Lambda_S_eff_vs_P': 0.7735, 'Spearman_eff_vs_P': 0.8426, 'Kendall_eff_vs_P': 1.3456}
+{'rho': 0.7, 'n': 50, 'Lambda_S_var': 0.0075, 'Spearman_var': 0.0071, 'Kendall_var': 0.0052, 'Pearson_var': 0.0055, 'Lambda_S_eff_vs_P': 0.7384, 'Spearman_eff_vs_P': 0.7809, 'Kendall_eff_vs_P': 1.0572}
+{'rho': 0.8, 'n': 50, 'Lambda_S_var': 0.0042, 'Spearman_var': 0.004, 'Kendall_var': 0.0038, 'Pearson_var': 0.0028, 'Lambda_S_eff_vs_P': 0.664, 'Spearman_eff_vs_P': 0.7012, 'Kendall_eff_vs_P': 0.7329}
+{'rho': 0.85, 'n': 50, 'Lambda_S_var': 0.0028, 'Spearman_var': 0.0026, 'Kendall_var': 0.003, 'Pearson_var': 0.0017, 'Lambda_S_eff_vs_P': 0.6066, 'Spearman_eff_vs_P': 0.6537, 'Kendall_eff_vs_P': 0.558}
+{'rho': 0.9, 'n': 50, 'Lambda_S_var': 0.0016, 'Spearman_var': 0.0014, 'Kendall_var': 0.0022, 'Pearson_var': 0.0008, 'Lambda_S_eff_vs_P': 0.5101, 'Spearman_eff_vs_P': 0.5843, 'Kendall_eff_vs_P': 0.3682}
+{'rho': 0.95, 'n': 50, 'Lambda_S_var': 0.0006, 'Spearman_var': 0.0004, 'Kendall_var': 0.0012, 'Pearson_var': 0.0002, 'Lambda_S_eff_vs_P': 0.3612, 'Spearman_eff_vs_P': 0.4867, 'Kendall_eff_vs_P': 0.1773}
+
+=== Accuracy (MSE and RMSE vs true ρ) ===
+{'rho': 0, 'n': 50, 'Lambda_S_mean': -0.0009, 'Spearman_mean': -0.0005, 'Kendall_mean': -0.0004, 'Pearson_mean': -0.0003, 'Lambda_S_var': 0.0262, 'Spearman_var': 0.0203, 'Kendall_var': 0.0095, 'Pearson_var': 0.0202, 'Lambda_S_MSE': 0.0262, 'Spearman_MSE': 0.0203, 'Kendall_MSE': 0.0095, 'Pearson_MSE': 0.0202, 'Lambda_S_RMSE': 0.1618, 'Spearman_RMSE': 0.1426, 'Kendall_RMSE': 0.0974, 'Pearson_RMSE': 0.1423}
+{'rho': 0.1, 'n': 50, 'Lambda_S_mean': 0.101, 'Spearman_mean': 0.0949, 'Kendall_mean': 0.0646, 'Pearson_mean': 0.1002, 'Lambda_S_var': 0.0259, 'Spearman_var': 0.0201, 'Kendall_var': 0.0095, 'Pearson_var': 0.02, 'Lambda_S_MSE': 0.0259, 'Spearman_MSE': 0.0202, 'Kendall_MSE': 0.0107, 'Pearson_MSE': 0.02, 'Lambda_S_RMSE': 0.1608, 'Spearman_RMSE': 0.142, 'Kendall_RMSE': 0.1035, 'Pearson_RMSE': 0.1415}
+{'rho': 0.2, 'n': 50, 'Lambda_S_mean': 0.1988, 'Spearman_mean': 0.1869, 'Kendall_mean': 0.1277, 'Pearson_mean': 0.1973, 'Lambda_S_var': 0.0241, 'Spearman_var': 0.0192, 'Kendall_var': 0.0092, 'Pearson_var': 0.0189, 'Lambda_S_MSE': 0.0242, 'Spearman_MSE': 0.0194, 'Kendall_MSE': 0.0144, 'Pearson_MSE': 0.0189, 'Lambda_S_RMSE': 0.1554, 'Spearman_RMSE': 0.1392, 'Kendall_RMSE': 0.12, 'Pearson_RMSE': 0.1375}
+{'rho': 0.3, 'n': 50, 'Lambda_S_mean': 0.2984, 'Spearman_mean': 0.2817, 'Kendall_mean': 0.1937, 'Pearson_mean': 0.2968, 'Lambda_S_var': 0.0216, 'Spearman_var': 0.0176, 'Kendall_var': 0.0087, 'Pearson_var': 0.0169, 'Lambda_S_MSE': 0.0216, 'Spearman_MSE': 0.018, 'Kendall_MSE': 0.02, 'Pearson_MSE': 0.0169, 'Lambda_S_RMSE': 0.1471, 'Spearman_RMSE': 0.134, 'Kendall_RMSE': 0.1415, 'Pearson_RMSE': 0.1301}
+{'rho': 0.4, 'n': 50, 'Lambda_S_mean': 0.3976, 'Spearman_mean': 0.3772, 'Kendall_mean': 0.262, 'Pearson_mean': 0.3966, 'Lambda_S_var': 0.0187, 'Spearman_var': 0.0158, 'Kendall_var': 0.0083, 'Pearson_var': 0.0148, 'Lambda_S_MSE': 0.0187, 'Spearman_MSE': 0.0164, 'Kendall_MSE': 0.0273, 'Pearson_MSE': 0.0148, 'Lambda_S_RMSE': 0.1367, 'Spearman_RMSE': 0.1279, 'Kendall_RMSE': 0.1653, 'Pearson_RMSE': 0.1217}
+{'rho': 0.5, 'n': 50, 'Lambda_S_mean': 0.496, 'Spearman_mean': 0.4736, 'Kendall_mean': 0.3332, 'Pearson_mean': 0.4961, 'Lambda_S_var': 0.0147, 'Spearman_var': 0.0131, 'Kendall_var': 0.0074, 'Pearson_var': 0.0117, 'Lambda_S_MSE': 0.0148, 'Spearman_MSE': 0.0138, 'Kendall_MSE': 0.0352, 'Pearson_MSE': 0.0117, 'Lambda_S_RMSE': 0.1215, 'Spearman_RMSE': 0.1173, 'Kendall_RMSE': 0.1876, 'Pearson_RMSE': 0.1081}
+{'rho': 0.6, 'n': 50, 'Lambda_S_mean': 0.5939, 'Spearman_mean': 0.571, 'Kendall_mean': 0.4092, 'Pearson_mean': 0.5956, 'Lambda_S_var': 0.0113, 'Spearman_var': 0.0104, 'Kendall_var': 0.0065, 'Pearson_var': 0.0088, 'Lambda_S_MSE': 0.0114, 'Spearman_MSE': 0.0113, 'Kendall_MSE': 0.0429, 'Pearson_MSE': 0.0088, 'Lambda_S_RMSE': 0.1067, 'Spearman_RMSE': 0.1061, 'Kendall_RMSE': 0.2072, 'Pearson_RMSE': 0.0938}
+{'rho': 0.7, 'n': 50, 'Lambda_S_mean': 0.6931, 'Spearman_mean': 0.6717, 'Kendall_mean': 0.4936, 'Pearson_mean': 0.6961, 'Lambda_S_var': 0.0076, 'Spearman_var': 0.0071, 'Kendall_var': 0.0053, 'Pearson_var': 0.0056, 'Lambda_S_MSE': 0.0076, 'Spearman_MSE': 0.0079, 'Kendall_MSE': 0.0478, 'Pearson_MSE': 0.0056, 'Lambda_S_RMSE': 0.0872, 'Spearman_RMSE': 0.0891, 'Kendall_RMSE': 0.2187, 'Pearson_RMSE': 0.0749}
+{'rho': 0.8, 'n': 50, 'Lambda_S_mean': 0.7926, 'Spearman_mean': 0.7747, 'Kendall_mean': 0.5905, 'Pearson_mean': 0.7972, 'Lambda_S_var': 0.0042, 'Spearman_var': 0.004, 'Kendall_var': 0.0038, 'Pearson_var': 0.0028, 'Lambda_S_MSE': 0.0042, 'Spearman_MSE': 0.0046, 'Kendall_MSE': 0.0477, 'Pearson_MSE': 0.0028, 'Lambda_S_RMSE': 0.0652, 'Spearman_RMSE': 0.0681, 'Kendall_RMSE': 0.2184, 'Pearson_RMSE': 0.0531}
+{'rho': 0.85, 'n': 50, 'Lambda_S_mean': 0.8421, 'Spearman_mean': 0.8268, 'Kendall_mean': 0.6466, 'Pearson_mean': 0.8473, 'Lambda_S_var': 0.0028, 'Spearman_var': 0.0026, 'Kendall_var': 0.0031, 'Pearson_var': 0.0017, 'Lambda_S_MSE': 0.0029, 'Spearman_MSE': 0.0032, 'Kendall_MSE': 0.0445, 'Pearson_MSE': 0.0017, 'Lambda_S_RMSE': 0.0537, 'Spearman_RMSE': 0.0563, 'Kendall_RMSE': 0.2109, 'Pearson_RMSE': 0.0416}
+{'rho': 0.9, 'n': 50, 'Lambda_S_mean': 0.8934, 'Spearman_mean': 0.8812, 'Kendall_mean': 0.7132, 'Pearson_mean': 0.8983, 'Lambda_S_var': 0.0016, 'Spearman_var': 0.0014, 'Kendall_var': 0.0022, 'Pearson_var': 0.0008, 'Lambda_S_MSE': 0.0016, 'Spearman_MSE': 0.0017, 'Kendall_MSE': 0.0371, 'Pearson_MSE': 0.0008, 'Lambda_S_RMSE': 0.0403, 'Spearman_RMSE': 0.0417, 'Kendall_RMSE': 0.1925, 'Pearson_RMSE': 0.0285}
+{'rho': 0.95, 'n': 50, 'Lambda_S_mean': 0.9448, 'Spearman_mean': 0.9365, 'Kendall_mean': 0.7976, 'Pearson_mean': 0.949, 'Lambda_S_var': 0.0006, 'Spearman_var': 0.0004, 'Kendall_var': 0.0012, 'Pearson_var': 0.0002, 'Lambda_S_MSE': 0.0006, 'Spearman_MSE': 0.0006, 'Kendall_MSE': 0.0244, 'Pearson_MSE': 0.0002, 'Lambda_S_RMSE': 0.0249, 'Spearman_RMSE': 0.0249, 'Kendall_RMSE': 0.1564, 'Pearson_RMSE': 0.0147}
+
+=== Robustness (median & IQR across trials): Increasing Vertical Contamination ===
+{'frac': 0, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6829, 'Spearman_med': 0.6521, 'Kendall_med': 0.4776, 'Pearson_med': 0.4073, 'Lambda_S_IQR': 0.1192, 'Spearman_IQR': 0.121, 'Kendall_IQR': 0.0996, 'Pearson_IQR': 0.1469}
+{'frac': 0.02, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6825, 'Spearman_med': 0.652, 'Kendall_med': 0.4776, 'Pearson_med': 0.4073, 'Lambda_S_IQR': 0.1177, 'Spearman_IQR': 0.1199, 'Kendall_IQR': 0.098, 'Pearson_IQR': 0.1471}
+{'frac': 0.05, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6655, 'Spearman_med': 0.6266, 'Kendall_med': 0.458, 'Pearson_med': 0.3163, 'Lambda_S_IQR': 0.123, 'Spearman_IQR': 0.1268, 'Kendall_IQR': 0.1029, 'Pearson_IQR': 0.1643}
+{'frac': 0.1, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6091, 'Spearman_med': 0.5503, 'Kendall_med': 0.4041, 'Pearson_med': 0.2121, 'Lambda_S_IQR': 0.1346, 'Spearman_IQR': 0.1422, 'Kendall_IQR': 0.1078, 'Pearson_IQR': 0.1807}
+{'frac': 0.2, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.5208, 'Spearman_med': 0.445, 'Kendall_med': 0.3257, 'Pearson_med': 0.1547, 'Lambda_S_IQR': 0.1513, 'Spearman_IQR': 0.1595, 'Kendall_IQR': 0.1159, 'Pearson_IQR': 0.1872}
+{'frac': 0.3, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.4343, 'Spearman_med': 0.3588, 'Kendall_med': 0.262, 'Pearson_med': 0.1263, 'Lambda_S_IQR': 0.1694, 'Spearman_IQR': 0.1737, 'Kendall_IQR': 0.1208, 'Pearson_IQR': 0.1898}
+{'frac': 0.4, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.356, 'Spearman_med': 0.2936, 'Kendall_med': 0.2147, 'Pearson_med': 0.1094, 'Lambda_S_IQR': 0.1831, 'Spearman_IQR': 0.1793, 'Kendall_IQR': 0.1257, 'Pearson_IQR': 0.1899}
+{'frac': 0.5, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.2914, 'Spearman_med': 0.2499, 'Kendall_med': 0.182, 'Pearson_med': 0.0987, 'Lambda_S_IQR': 0.1959, 'Spearman_IQR': 0.1849, 'Kendall_IQR': 0.1273, 'Pearson_IQR': 0.1929}
+{'frac': 0.6, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.2438, 'Spearman_med': 0.2262, 'Kendall_med': 0.1657, 'Pearson_med': 0.09, 'Lambda_S_IQR': 0.2056, 'Spearman_IQR': 0.1881, 'Kendall_IQR': 0.129, 'Pearson_IQR': 0.1932}
+{'frac': 0.7, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.2197, 'Spearman_med': 0.2231, 'Kendall_med': 0.1624, 'Pearson_med': 0.0826, 'Lambda_S_IQR': 0.2109, 'Spearman_IQR': 0.1875, 'Kendall_IQR': 0.129, 'Pearson_IQR': 0.1933}
+
+=== Robustness (median & IQR across trials): Increasing Leverage Contamination ===
+{'frac': 0, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6676, 'Spearman_med': 0.6209, 'Kendall_med': 0.4629, 'Pearson_med': 0.283, 'Lambda_S_IQR': 0.1277, 'Spearman_IQR': 0.14, 'Kendall_IQR': 0.111, 'Pearson_IQR': 0.4934}
+{'frac': 0.02, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6674, 'Spearman_med': 0.6209, 'Kendall_med': 0.4629, 'Pearson_med': 0.4683, 'Lambda_S_IQR': 0.1294, 'Spearman_IQR': 0.142, 'Kendall_IQR': 0.1127, 'Pearson_IQR': 0.4939}
+{'frac': 0.05, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.636, 'Spearman_med': 0.5706, 'Kendall_med': 0.4302, 'Pearson_med': 0.3161, 'Lambda_S_IQR': 0.1406, 'Spearman_IQR': 0.1595, 'Kendall_IQR': 0.1241, 'Pearson_IQR': 0.4784}
+{'frac': 0.1, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.5503, 'Spearman_med': 0.445, 'Kendall_med': 0.3518, 'Pearson_med': 0.2134, 'Lambda_S_IQR': 0.1717, 'Spearman_IQR': 0.1982, 'Kendall_IQR': 0.1486, 'Pearson_IQR': 0.3254}
+{'frac': 0.2, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.4289, 'Spearman_med': 0.2975, 'Kendall_med': 0.2522, 'Pearson_med': 0.154, 'Lambda_S_IQR': 0.2122, 'Spearman_IQR': 0.2267, 'Kendall_IQR': 0.1698, 'Pearson_IQR': 0.3331}
+{'frac': 0.3, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.3315, 'Spearman_med': 0.2155, 'Kendall_med': 0.1853, 'Pearson_med': 0.1274, 'Lambda_S_IQR': 0.2503, 'Spearman_IQR': 0.2382, 'Kendall_IQR': 0.1812, 'Pearson_IQR': 0.3054}
+{'frac': 0.4, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.2556, 'Spearman_med': 0.1783, 'Kendall_med': 0.1461, 'Pearson_med': 0.1099, 'Lambda_S_IQR': 0.2911, 'Spearman_IQR': 0.2438, 'Kendall_IQR': 0.1845, 'Pearson_IQR': 0.2835}
+{'frac': 0.5, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.1954, 'Spearman_med': 0.1746, 'Kendall_med': 0.1298, 'Pearson_med': 0.0983, 'Lambda_S_IQR': 0.3442, 'Spearman_IQR': 0.2378, 'Kendall_IQR': 0.1812, 'Pearson_IQR': 0.2605}
+{'frac': 0.6, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.151, 'Spearman_med': 0.1935, 'Kendall_med': 0.1314, 'Pearson_med': 0.0896, 'Lambda_S_IQR': 0.3155, 'Spearman_IQR': 0.2288, 'Kendall_IQR': 0.1731, 'Pearson_IQR': 0.2433}
+{'frac': 0.7, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.1456, 'Spearman_med': 0.2259, 'Kendall_med': 0.1478, 'Pearson_med': 0.0843, 'Lambda_S_IQR': 0.3226, 'Spearman_IQR': 0.2153, 'Kendall_IQR': 0.1616, 'Pearson_IQR': 0.2272}
+
+=== Robustness (median & IQR across trials): Increasing Uniform Contamination ===
+{'frac': 0, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6823, 'Spearman_med': 0.6414, 'Kendall_med': 0.4776, 'Pearson_med': 0.5629, 'Lambda_S_IQR': 0.1222, 'Spearman_IQR': 0.1339, 'Kendall_IQR': 0.1078, 'Pearson_IQR': 0.5371}
+{'frac': 0.02, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6828, 'Spearman_med': 0.6417, 'Kendall_med': 0.4776, 'Pearson_med': 0.5638, 'Lambda_S_IQR': 0.1213, 'Spearman_IQR': 0.1327, 'Kendall_IQR': 0.1061, 'Pearson_IQR': 0.5373}
+{'frac': 0.05, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6642, 'Spearman_med': 0.6066, 'Kendall_med': 0.458, 'Pearson_med': 0.3697, 'Lambda_S_IQR': 0.1296, 'Spearman_IQR': 0.1473, 'Kendall_IQR': 0.1159, 'Pearson_IQR': 0.6226}
+{'frac': 0.1, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.6098, 'Spearman_med': 0.5103, 'Kendall_med': 0.4008, 'Pearson_med': 0.1674, 'Lambda_S_IQR': 0.1476, 'Spearman_IQR': 0.1763, 'Kendall_IQR': 0.1322, 'Pearson_IQR': 0.5149}
+{'frac': 0.2, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.5235, 'Spearman_med': 0.3731, 'Kendall_med': 0.3159, 'Pearson_med': 0.0809, 'Lambda_S_IQR': 0.1739, 'Spearman_IQR': 0.2062, 'Kendall_IQR': 0.1518, 'Pearson_IQR': 0.3995}
+{'frac': 0.3, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.4429, 'Spearman_med': 0.2641, 'Kendall_med': 0.2424, 'Pearson_med': 0.0447, 'Lambda_S_IQR': 0.197, 'Spearman_IQR': 0.2214, 'Kendall_IQR': 0.1616, 'Pearson_IQR': 0.3354}
+{'frac': 0.4, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.3657, 'Spearman_med': 0.1794, 'Kendall_med': 0.1788, 'Pearson_med': 0.0316, 'Lambda_S_IQR': 0.2172, 'Spearman_IQR': 0.229, 'Kendall_IQR': 0.1665, 'Pearson_IQR': 0.2968}
+{'frac': 0.5, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.2883, 'Spearman_med': 0.1136, 'Kendall_med': 0.1233, 'Pearson_med': 0.0204, 'Lambda_S_IQR': 0.2376, 'Spearman_IQR': 0.2291, 'Kendall_IQR': 0.1682, 'Pearson_IQR': 0.2682}
+{'frac': 0.6, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.2147, 'Spearman_med': 0.0667, 'Kendall_med': 0.0792, 'Pearson_med': 0.0134, 'Lambda_S_IQR': 0.2552, 'Spearman_IQR': 0.2251, 'Kendall_IQR': 0.1633, 'Pearson_IQR': 0.248}
+{'frac': 0.7, 'n': 50, 'rho': 0.7, 'Lambda_S_med': 0.139, 'Spearman_med': 0.0337, 'Kendall_med': 0.0449, 'Pearson_med': 0.0083, 'Lambda_S_IQR': 0.2665, 'Spearman_IQR': 0.2195, 'Kendall_IQR': 0.1584, 'Pearson_IQR': 0.2302}
+
+=== Null calibration (independence): mean, sd, q95, q99 ===
+Lambda_S {'mean': -0.0003, 'sd': 0.1621, 'q95': 0.2646, 'q99': 0.3642}
+Spearman {'mean': -0.0002, 'sd': 0.1427, 'q95': 0.2354, 'q99': 0.3273}
+Kendall {'mean': -0.0001, 'sd': 0.0976, 'q95': 0.1608, 'q99': 0.2245}
+Pearson {'mean': -0.0003, 'sd': 0.1427, 'q95': 0.2337, 'q99': 0.3265}
+
+=== Power (rejection rate at alpha=0.05) ===
+{'n': 50, 'rho': 0.1, 'alpha': 0.05, 'power_LambdaS': 0.0911, 'power_Spearman': 0.0978, 'power_Kendall': 0.0974}
+{'n': 50, 'rho': 0.2, 'alpha': 0.05, 'power_LambdaS': 0.235, 'power_Spearman': 0.2616, 'power_Kendall': 0.2594}
+{'n': 50, 'rho': 0.3, 'alpha': 0.05, 'power_LambdaS': 0.4775, 'power_Spearman': 0.5237, 'power_Kendall': 0.5212}
+{'n': 50, 'rho': 0.4, 'alpha': 0.05, 'power_LambdaS': 0.7399, 'power_Spearman': 0.7866, 'power_Kendall': 0.784}
+{'n': 50, 'rho': 0.5, 'alpha': 0.05, 'power_LambdaS': 0.9208, 'power_Spearman': 0.9454, 'power_Kendall': 0.9444}
+{'n': 50, 'rho': 0.6, 'alpha': 0.05, 'power_LambdaS': 0.9879, 'power_Spearman': 0.9937, 'power_Kendall': 0.9935}
+{'n': 50, 'rho': 0.7, 'alpha': 0.05, 'power_LambdaS': 0.9996, 'power_Spearman': 0.9999, 'power_Kendall': 0.9998}
+{'n': 50, 'rho': 0.8, 'alpha': 0.05, 'power_LambdaS': 1.0, 'power_Spearman': 1.0, 'power_Kendall': 1.0}
+{'n': 50, 'rho': 0.9, 'alpha': 0.05, 'power_LambdaS': 1.0, 'power_Spearman': 1.0, 'power_Kendall': 1.0}
+ 
+=== Type I Error ===
+LambdaS: hat α=0.049  CI95=(0.047,0.051)  n=50  trials=50000
+Spearman: hat α=0.051  CI95=(0.049,0.053)  n=50  trials=50000
+Kendall: hat α=0.050  CI95=(0.049,0.052)  n=50  trials=50000
+Pearson: hat α=0.051  CI95=(0.050,0.053)  n=50  trials=50000
+
+=== Monotone invariance (corr of Λ_S before/after f(Y)) ===
+tanh 1.0
+exp 1.0
+cube 1.0
+logistic 1.0
+

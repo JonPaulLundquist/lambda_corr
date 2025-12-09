@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lambda_corr"
+version = "0.1.0"
+description = "Repeated-Average-Rank Correlations Λ (Lambda): a family of robust, symmetric/asymmetric measures of monotone association based on pairwise rank slopes."
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.8"
+license = "MIT"
+license-files = ["*LICENSE*"]
+authors = [{ name = "Jon Paul Lundquist" }]
+keywords = ["statistics", "robust", "correlation", "ranked-correlation", "theil-sen", "siegel-slopes", "numba"]
+classifiers = ["Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = ["numba>=0.61", "numpy>=1.23"]
+
+[project.urls]
+Homepage = "https://github.com/JonPaulLundquist/lambda_corr"
+Issues = "https://github.com/JonPaulLundquist/lambda_corr/issues"
+
+[tool.setuptools]
+py-modules = ["lambda_corr"]
+
+[tool.setuptools.package-dir]
+"" = "src"
