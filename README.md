@@ -17,7 +17,7 @@ and uses a **signed geometric-mean symmetrization**, mirroring how:
 
 - **Kendall’s τ_b** can be written as the signed geometric mean of **Somers’ D\_{Y|X}** and **D\_{X|Y}**;
 - **Pearson’s r** is the signed geometric mean of the two OLS slopes
-    $m_{Y\mid X} = \frac{\operatorname{cov}(X,Y)}{\operatorname{var}(X)}$ and $m_{X\mid Y} = \frac{\operatorname{cov}(X,Y)}{\operatorname{var}(Y)}$;
+      $m_{Y\mid X} = \dfrac{\mathrm{cov}(X,Y)}{\mathrm{var}(X)}$ and $m_{X\mid Y} = \dfrac{\mathrm{cov}(X,Y)}{\mathrm{var}(Y)}$;
 - **Spearman’s ρ** has the same construction applied to the **rank-transformed**
   variables \(r_X, r_Y\).
   
@@ -28,7 +28,7 @@ and ensures interpretability as a standard measure of monotonic trend/associatio
 
 ## Canonical Definition of Λₛ
 
-Given paired samples \((x_i, y_i)\), \(i=1…n\):
+Given paired samples $(x_i, y_i)$, $i = 1,\dots,n$:
 
 1. Compute **average ranks**:
 ```python
@@ -45,14 +45,14 @@ ryt = (ry - np.mean(ry)) / np.std(ry)
 3. For each anchor point sample *i*, compute the **median slope in rank space**:
 
 $$
-b_i = \operatorname{median}_{j\ne i,\, rxt[j]\ne rxt[i]}
-      \frac{ryt[j] - ryt[i]}{rxt[j] - rxt[i]}
+b_i = \mathrm{median}_{j \ne i,\; rxt[j] \ne rxt[i]}
+      \frac{\,ryt[j] - ryt[i]\,}{\,rxt[j] - rxt[i]\,}
 $$
 
 4. Compute the **asymmetric** rank-slope correlations as the outer mean over i slopes:
 - **Λ(Y|X)**:
 $$
-\Lambda_{yx} = \frac{1}{n}\sum_i b_i
+\Lambda_{yx} = \frac{1}{n} \sum_i b_i
 $$
 
 - **Λ(X|Y)**: repeat with x and y swapped.
@@ -60,8 +60,8 @@ $$
 5. Define the **symmetric** Lambda:
 
 $$
-\Lambda_s = \operatorname{sgn}(\Lambda_{yx})
-            \sqrt{\left|\Lambda_{yx}\,\Lambda_{xy}\right|}
+\Lambda_s = \mathrm{sgn}(\Lambda_{yx})\,
+            \sqrt{\bigl|\Lambda_{yx}\,\Lambda_{xy}\bigr|}
 $$
 
 If the asymmetric signs disagree (rare under the null), Λₛ = 0.
@@ -126,9 +126,10 @@ Where:
 - **Λₐ** — normalized asymmetry index with range [0, 1].
 
 $$
-\Lambda_a = \frac{|\Lambda_{yx}-\Lambda_{xy}|}{|\Lambda_{yx}|+|\Lambda_{xy}|}
+\Lambda_a = \frac{\bigl|\Lambda_{yx} - \Lambda_{xy}\bigr|}
+                 {\bigl|\Lambda_{yx}\bigr| + \bigl|\Lambda_{xy}\bigr|}
 $$
-
+with $\Lambda_a \in [0,1]$.
 
 ---
     
