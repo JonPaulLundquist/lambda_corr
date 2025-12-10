@@ -6,10 +6,10 @@ based on **pairwise rank slopes**. Compared with traditional rank-based measures
 (Spearman’s ρ and Kendall’s τ [1,2]), Lambda is:
 
 - **Substantially more resistant to noise and outliers** (see /results/*Robustness*.png).
-- **Much less biased relative to Pearson’s r [3] linear correlation** (see /results/*bias*.png).
-- **Competitive or superior in accuracy** for moderate–strong signals (see /results/*accuracy*.png).
+- **Much less biased relative to Pearson’s r [3] linear correlation** (see /results/\*bias\*.png).
+- **Competitive or superior in accuracy** for moderate–strong signals (see /results/\*accuracy\*.png).
 - Slightly less efficient asymptotically (~81% vs. ~91% for ρ and τ). 
-  See /results/*efficiency*.png and /results/*power*.png (code for figures is in /tests/test_lambdacorr2.py)
+  See /results/\*efficiency\*.png and /results/\*power\*.png (code for figures is in /tests/test_lambdacorr2.py)
   
 The canonical statistic, **Λₛ**, combines a robust median-of-pairwise-slopes inner 
 loop with an efficient outer mean (repeated-average, inspired by Seigel's repeated-median [4]), 
@@ -17,7 +17,7 @@ and uses a **signed geometric-mean symmetrization**, mirroring how:
 
 - **Kendall’s τ_b** can be written as the signed geometric mean of **Somers’ D\_{Y|X}** and **D\_{X|Y}**;
 - **Pearson’s r** is the signed geometric mean of the two OLS slopes
-  \(m_{Y\mid X} = \frac{\operatorname{cov}(X,Y)}{\operatorname{var}(X)}\) and \(m_{X\mid Y} = \frac{\operatorname{cov}(X,Y)}{\operatorname{var}(Y)}\);
+    $m_{Y\mid X} = \frac{\operatorname{cov}(X,Y)}{\operatorname{var}(X)}$ and $m_{X\mid Y} = \frac{\operatorname{cov}(X,Y)}{\operatorname{var}(Y)}$;
 - **Spearman’s ρ** has the same construction applied to the **rank-transformed**
   variables \(r_X, r_Y\).
   
@@ -44,26 +44,25 @@ ryt = (ry - np.mean(ry)) / np.std(ry)
 
 3. For each anchor point sample *i*, compute the **median slope in rank space**:
 
-\[
+$$
 b_i = \operatorname{median}_{j\ne i,\, rxt[j]\ne rxt[i]}
-      \frac{\;ryt[j] - ryt[i]\;}{\;rxt[j] - rxt[i]\;}
-\]
-
+      \frac{ryt[j] - ryt[i]}{rxt[j] - rxt[i]}
+$$
 
 4. Compute the **asymmetric** rank-slope correlations as the outer mean over i slopes:
 - **Λ(Y|X)**:
-  \[
-  \Lambda_{yx} = \frac{1}{n}\sum_i b_i
-  \]
+$$
+\Lambda_{yx} = \frac{1}{n}\sum_i b_i
+$$
 
 - **Λ(X|Y)**: repeat with x and y swapped.
 
 5. Define the **symmetric** Lambda:
 
-\[
+$$
 \Lambda_s = \operatorname{sgn}(\Lambda_{yx})
             \sqrt{\left|\Lambda_{yx}\,\Lambda_{xy}\right|}
-\]
+$$
 
 If the asymmetric signs disagree (rare under the null), Λₛ = 0.
 
@@ -74,13 +73,13 @@ If the asymmetric signs disagree (rare under the null), Λₛ = 0.
 - **Range:** Λₛ ∈ \([-1,1]\)
 - **Robust: Very robust to outliers and noise**; extremely high sign-breakdown 
                   point (median-of-slopes core) with adversarial contamination
-                  (see /results/*Robustness*.png).
+                  (see /results/\*Robustness\*.png).
 - **Less biased:** Much less biased than Spearman or Kendall relative to Pearson 
-                  (see /results/*bias*.png).
+                  (see /results/\*bias\*.png).
 - **Accurate: Competitive or superior in accuracy** for moderate–strong signals.
 - **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with var_opt/var_Λₛ = (1/N)/(1.112^2/N).
                   (Siegal median of medians is ~37%). 
-                  See /results/*efficiency*.png and /results/*power*.png
+                  See /results/\*efficiency\*.png and /results/\*power\*.png
 - **Null distribution:** centered, symmetric, slightly heavier tails than Spearman.
 - **Symmetric:** Λₛ(x,y) == Λₛ(y,x).
 - **Invariant** under strictly monotone transforms.
@@ -125,11 +124,11 @@ Where:
 - **Λ(Y|X)** / **Λ(X|Y)** — asymmetric directional correlations.
 - **p-values** correspond to the chosen `alt = {"two-sided","greater","less"}`.
 - **Λₐ** — normalized asymmetry index with range [0, 1].
-```
-  \[
-  \Lambda_a = \frac{|\Lambda_{yx}-\Lambda_{xy}|}{|\Lambda_{yx}|+|\Lambda_{xy}|}
-  \]
-```
+
+$$
+\Lambda_a = \frac{|\Lambda_{yx}-\Lambda_{xy}|}{|\Lambda_{yx}|+|\Lambda_{xy}|}
+$$
+
 
 ---
     
@@ -218,9 +217,12 @@ print(f"Asymmetry = {Lambda_a: .4f}")
 ## References
 [1] Spearman, C. The proof and measurement of association between two things. 
       American Journal of Psychology, 15(1), 72–101, 1904.
+      
 [2] Kendall, M.G., Rank Correlation Methods (4th Edition), Charles 
       Griffin & Co., 1970.
+      
 [3] https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+
 [4]Siegel, A.F., Robust Regression Using Repeated Medians, Biometrika, 
       Vol. 69, pp. 242-244, 1982.
       
