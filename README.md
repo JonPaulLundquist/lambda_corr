@@ -248,7 +248,7 @@ $$
                  {\bigl|\Lambda_{yx}\bigr| + \bigl|\Lambda_{xy}\bigr|}
 $$
 
-with $\mathbf{\Lambda_a}$ in [0,1]$.
+with $\mathbf{\Lambda_a}$ $\in [0,1]$.
 
 ---
     
