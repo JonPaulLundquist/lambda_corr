@@ -15,7 +15,7 @@ The canonical statistic, **Λₛ**, combines a robust median-of-pairwise-slopes 
 loop with an efficient outer mean (repeated-average, inspired by Seigel's repeated-median [4]), 
 and uses a **signed geometric-mean symmetrization**, mirroring how:
 
-- **Kendall’s τ_b** can be written as the signed geometric mean of **Somers’ D\_{Y|X}** and **D\_{X|Y}**;
+- **Kendall’s τ_b** can be written as the signed geometric mean of **Somers’ D(Y|X)** and **D(X|Y)**;
 - **Pearson’s r** is the signed geometric mean of the two OLS slopes
       $m_{Y\mid X} = \dfrac{\mathrm{cov}(X,Y)}{\mathrm{var}(X)}$ and $m_{X\mid Y} = \dfrac{\mathrm{cov}(X,Y)}{\mathrm{var}(Y)}$;
 - **Spearman’s ρ** has the same construction applied to the **rank-transformed**
@@ -205,8 +205,9 @@ print(f"Asymmetry = {Lambda_a: .4f}")
   both efficiency and null spread but gives up most of the robustness advantage 
   compared to mean of medians.
 - Continuum of Lambda variants behavior (outside loop - inside loop):
-  Spearman (ρ) ≈ Λₛ^(mean-mean)  <->  Λₛ^(mean-median)  <-> Λₛ^(median-mean)  <->  
-                                                          Λₛ^(median-median) ≈ Siegel
+
+  Spearman (ρ) ≈ Λₛ^(mean-mean)  <->  Λₛ^(mean-median)  <-> Λₛ^(median-mean)  <->  Λₛ^(median-median) ≈ Siegel
+  
   Canonical choice: Λₛ^(mean-median) — best efficiency/robustness balance 
                                               especially at low statistics)
 
@@ -227,12 +228,6 @@ print(f"Asymmetry = {Lambda_a: .4f}")
 
 [4]Siegel, A.F., Robust Regression Using Repeated Medians, Biometrika, 
       Vol. 69, pp. 242-244, 1982.
-      
-## Dependencies
-- Python ≥ 3.8  
-- NumPy ≥ 1.23
-- Numba ≥ 0.61
-- SciPy ≥ 1.9 #If needed for verification of statistical testing
 
 ## Citation
 If you use lambda_corr in academic or scientific work, please cite:
