@@ -1,6 +1,6 @@
 # lambda_corr — Repeated-Average-Rank Correlation Λ (Lambda)
 
-`lambda_corr` introduces and implements the **Repeated-Average-Rank correlation Λ (Lambda)**, 
+`lambda_corr` introduces and implements the **Repeated-Average-Rank Correlation Λ (Lambda)**, 
 a new family of robust, symmetric, and asymmetric measures of monotone association 
 based on **pairwise rank slopes**. Compared with traditional rank-based measures 
 (Spearman’s ρ and Kendall’s τ [1,2]), Lambda is:
