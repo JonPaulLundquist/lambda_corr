@@ -41,11 +41,18 @@ Created on Wed Oct  8 19:56:06 2025
         Lambda_yx = (1/n) * sum_i b_i
 
     Compute Λ_xy by swapping x and y. The symmetric correlation Λ_s is the
-    sign-preserving geometric mean (just as Kendall's τ_b is the signed geometric 
-                                    mean of the asymmetric Somers' D):
+    sign-preserving geometric mean:
 
         Λ_s = sgn(Lambda_yx) * sqrt(|Lambda_yx * Lambda_xy|)
     
+    This construction mirrors classical correlation measures: Kendall’s τ_b can
+    be written as the signed geometric mean of the asymmetric Somers’ D
+    statistics D_{Y|X} and D_{X|Y}, and Pearson’s r can be written as the
+    signed geometric mean of the two ordinary least-squares regression slopes
+    m_{Y|X} = cov(X, Y) / var(X) and m_{X|Y} = cov(X, Y) / var(Y).
+    Λ_s extends this same geometric-mean symmetrization to robust repeated average 
+    rank-slope correlations.
+
     Parameters
     ----------
     x, y : 1-D array_like 
@@ -195,10 +202,8 @@ Created on Wed Oct  8 19:56:06 2025
 
 import numpy as np
 from math import erf, sqrt, exp, pi
-from numba import njit, objmode, prange
+from numba import njit, objmode #, prange
 import warnings
-
-NUMBA_PARALLEL_DIAGNOSTICS=1
 
 # --- utilities: nanmean on first k items, in-place quickselect kth ---
 @njit(cache=True, nogil=True, inline='always')
@@ -383,8 +388,8 @@ def _check_stop(h, p_tol, N):
     return check
 
 #Numba p-value permutation test
-@njit(cache=True, nogil=True, inline='always', parallel=True)
-def _lambda_pvals(rx, ry, n, Lambda_s, Lambda_yx, Lambda_xy, p_tol=1e-5, 
+@njit(cache=True, nogil=True, inline='always') #, parallel=True
+def _lambda_pvals(rx, ry, n, Lambda_s, Lambda_yx, Lambda_xy, p_tol=1e-4, 
                   n_perm=10000, alt="two-sided"):
     # ---- Permutation test ----
 
@@ -468,17 +473,32 @@ def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt
     
     if pvals not in [True, False]:
         raise ValueError(f"pvals must be True or False, got '{pvals}'")
+        
     if ptype not in ["default", "perm", "asymp"]:
         raise ValueError(f"ptype must be 'default', 'perm', or 'asymp', got '{ptype}'")
-    if p_tol <= 10e-15:
-        raise ValueError("p_tol must be a positive reasonable value")
+    
+    # --- p_tol checks ---
+    # Basic domain check
+    if not (0 < p_tol < 1):
+        raise ValueError("p_tol must be in the interval (0, 1).")
+    # Practical lower bound
+    if p_tol < 1e-15:
+        raise ValueError("p_tol is too small to be practical; use p_tol ≥ 1e-15.")
+    # Very small but allowed: warn
+    if p_tol < 1e-10:
+        warnings.warn(
+            f"p_tol={p_tol:g} is extremely small; detecting >6σ effects requires a very "
+            "large n_perm for stable permutation p-values.",
+            UserWarning,
+        )
+    
     if alt not in ["two-sided", "greater", "less"]:
         raise ValueError(f"alt must be 'two-sided', 'greater', or 'less', got '{alt}'")
     
-    x = np.asarray(x)
-    n = x.size
+    # --- n_perm checks ---
+    n_perm = int(n_perm)
     if n_perm < 1:
-        raise ValueError("n_perm must be an integer > 1")
+        raise ValueError("n_perm must be an integer ≥ 1")
     
     min_needed = int(1.0 / p_tol)
     
@@ -488,8 +508,17 @@ def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt
             f"use {min_needed} permutations for stable p-values.",
             UserWarning
         )
-        
+    
+    x = np.asarray(x)
     y = np.asarray(y)
+    n = x.size
+    if n_perm < n:
+        warnings.warn(
+            f"n_perm={n_perm} is smaller than sample size n={n}; "
+            "for stable permutation p-values, using n_perm ≥ n is strongly recommended.",
+            UserWarning
+        )
+
     if n != y.size or n < 3:
         raise ValueError("x and y must be same length, n >= 3")
     

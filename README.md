@@ -1,126 +1,171 @@
-# lambda_corr -- Repeated-Average-Rank Correlation Λ (Lambda)
+# lambda_corr — Repeated-Average-Rank Correlation Λ (Lambda)
 
-The Repeated-Average-Rank correlation Λ (Lambda) defines a family of robust, 
-symmetric and asymmetric measures of monotone association based on pairwise rank 
-slopes. Compared with traditional rank-based measures (Spearman’s ρ and Kendall’s τ), 
-Lambda is substantially more resistant to noise contamination and exhibits markedly 
-less bias relative to Pearson’s linear correlation. For moderate to strong signals, 
-its estimation accuracy is comparable to, and often exceeds, that of ρ and τ. These 
-advantages come at the cost of a modest reduction in asymptotic efficiency: 
-approximately 81% for Lambda, compared to ~91% for Spearman’s ρ and Kendall’s τ.
+`lambda_corr` introduces, and implements, the **Repeated-Average-Rank correlation Λ (Lambda)**, 
+a new family of robust, symmetric and asymmetric measures of monotone association 
+based on **pairwise rank slopes**. Compared with traditional rank-based measures 
+(Spearman’s ρ and Kendall’s τ [1,2]), Lambda is:
 
-The canonical version, Λₛ, is the mean of median pairwise rank slopes -- that 
-is for each observation i, the median slope of y ranks versus x ranks is 
-calculated, then the average is taken to obtain a single robust slope estimate 
-(inspired by Siegal slope [1]). The resulting coefficient is symmetrized as 
-the geometric mean of Λ for x vs y and Λ for y vs x -- in the same manner as 
-Kendall's symmetric τ_a can be found from the asymmetric Somers' D.
+- **Substantially more resistant to noise and outliers** (see /results/*Robustness*.png).
+- **Much less biased relative to Pearson’s r [3] linear correlation** (see /results/*bias*.png).
+- **Competitive or superior in accuracy** for moderate–strong signals (see /results/*accuracy*.png).
+- Slightly less efficient asymptotically (~81% vs. ~91% for ρ and τ). 
+  See /results/*efficiency*.png and /results/*power*.png (code for figures is in /tests/test_lambdacorr2.py)
+  
+The canonical statistic, **Λₛ**, combines a robust median-of-pairwise-slopes inner 
+loop with an efficient outer mean (repeated-average, inspired by Seigel's repeated-median [4]), 
+and uses a **signed geometric-mean symmetrization**, mirroring how:
 
-The Λₛ (mean-median) correlation combines the high noise breakdown robustness 
-of the repeated median with the unbiased symmetry of an outer mean, producing 
-a measure that is resistant to outliers and heavy-tailed noise while retaining 
-interpretability as a standard measure of monotonic trend/association.
-    
-Let (x_i, y_i), i=1..n. Let rx = ranks(x) and ry = ranks(y) using average ranks
-for ties, then z-score the ranks to zero mean / unit variance:
-  rxt = (rx - mean(rx)) / std(rx)
-  ryt = (ry - mean(ry)) / std(ry)
+- **Kendall’s τ_b** can be written as the signed geometric mean of **Somers’ D\_{Y|X}** and **D\_{X|Y}**;
+- **Pearson’s r** is the signed geometric mean of the two OLS slopes
+  \(m_{Y\mid X} = \frac{\operatorname{cov}(X,Y)}{\operatorname{var}(X)}\) and \(m_{X\mid Y} = \frac{\operatorname{cov}(X,Y)}{\operatorname{var}(Y)}\);
+- **Spearman’s ρ** has the same construction applied to the **rank-transformed**
+  variables \(r_X, r_Y\).
+  
+Λₛ extends this same geometric-mean construction to **robust repeated-average-rank correlations**
+and ensures interpretability as a standard measure of monotonic trend/association.
 
-For each anchor i, compute the median slope in rank space:
-  b_i = median_{j != i, rxt[j] != rxt[i]} ( (rxt[j] - rxt[i]) / (ryt[j] - ryt[i]) )
+---
 
-Aggregate by the outer mean for the asymmetric Λ(X|Y) and (Y|X):
-  Lambda_xy = (1/n) * sum_i b_i
-Do the same with x and y swapped to get Lambda_yx.
+## Canonical Definition of Λₛ
 
-Symmetric Λₛ correlation is the geometric mean (just as Kendall's tau_a as 
-the geometric mean of the asymmetric Somers' D):
-  Λₛ = sgn(Lambda_yx) * sqrt( Lambda_yx * Lambda_xy )
+Given paired samples \((x_i, y_i)\), \(i=1…n\):
 
-Parameters:
-    x, y : 1-D array_like 
-        Two input samples of equal length (n ≥ 3).
-    
-    pvals : {True, False}, optional
-        Flag for p-value calculation. Default: True.
-        If False, all returned p-values are NaN and no permutation/asymptotic
-        p-value calculations are performed.
-    
-    ptype : {"default", "asymp", "perm"}, optional
-        Type of p-value calculation. Default: "default".
-        - "default": If n < 25 do permutation calculation. 
-                     If n ≥ 25 use asymptotic approximation.
-        - "asymp": Use asymptotic approximation. Assumes no ties. 
-                   The more ties the less accurate.
-        - "perm": Calculates p-value using permutations. 
-                  Valid with any fraction of ties.
-    
-    p_tol : float, optional
-        If uncertainty on p-value is less than p_tol stop permutation calculation. 
-        Default: 1e-5.
-    
-    n_perm : integer, optional
-        Maximum number of Monte Carlo permutations for p-value estimation. Default: 1e4.
-        Estimation will terminate earlier if the p-value uncertainty falls below p_tol. 
-    
-    alt : {"two-sided", "greater", "less"}, optional
-        Alternative hypothesis relative to the null of no correlation. 
-        Default: "two-sided".
-        - "two-sided": Probability of getting larger magnitude Λ ([-1, 1]) with population 
-        correlation of zero.
-        - "greater": Probability of getting a greater Λ ([Λ, 1]) with population 
-        correlation of zero.
-        - "less": Probability of getting a smaller Λ ([-1, Λ]) with population correlation
-        of zero.
-        
-Returns:
-    Lambda_s  = Λₛ  (symmetric repeated-average-rank-correlation [-1,1])
-    p_s p-value of Λₛ
-    Lambda_xy = Λ(x|y)  directional slope of x on y in rank space
-    p_xy p-value of Λ_xy
-    Lambda_yx = Λ(y|x)  directional slope of y on x in rank space
-    p_yx p-value of Λ_yx
-    Lambda_a  = Λ_a  normalized asymmetry = |Λ(Y|X)-Λ(X|Y)| / (|Λ(Y|X)|+|Λ(X|Y)|) in [0,1]
-    
+1. Compute **average ranks**:
+```python
+rx = rankdata(x, method="average")
+ry = rankdata(y, method="average")
+```
+
+2. **Standardize** ranks to zero mean / unit variance:
+```python
+rxt = (rx - np.mean(rx)) / np.std(rx)
+ryt = (ry - np.mean(ry)) / np.std(ry)
+```
+
+3. For each anchor point sample *i*, compute the **median slope in rank space**:
+
+\[
+b_i = \operatorname{median}_{j\ne i,\, rxt[j]\ne rxt[i]}
+      \frac{\;ryt[j] - ryt[i]\;}{\;rxt[j] - rxt[i]\;}
+\]
+
+
+4. Compute the **asymmetric** rank-slope correlations as the outer mean over i slopes:
+- **Λ(Y|X)**:
+  \[
+  \Lambda_{yx} = \frac{1}{n}\sum_i b_i
+  \]
+
+- **Λ(X|Y)**: repeat with x and y swapped.
+
+5. Define the **symmetric** Lambda:
+
+\[
+\Lambda_s = \operatorname{sgn}(\Lambda_{yx})
+            \sqrt{\left|\Lambda_{yx}\,\Lambda_{xy}\right|}
+\]
+
+If the asymmetric signs disagree (rare under the null), Λₛ = 0.
+
+---
+
 ## Properties
-- As determined by MC Λₛ is slightly less efficient than Spearman/Kendall [2,3] 
-  in clean Gaussian data, particularly at small ρ. For ρ>~0.6 efficiency is 
-  the same as Spearman. Λₛ efficiency ~0.8 at moderate ρ → it needs about 
-  1 / 0.8 ≈ 1.25× as many samples as Pearson [4] to reach the same variance.
-- Asymptotic efficiency = var_opt/var_Λₛ = (1/N)/(1.112^2/N) = 81% versus
-  Spearman's ρ and Kendall's τ ~91% (Siegal median of medians is ~37%).
-- The most robust overall compared to Spearman, Kendall, and Pearson: with 
-  increasing noise fraction it retains the strongest central signal
-  with Spearman-like variability and much better stability than Pearson. As 
-  outlier fraction grows, Λₛ’s median stays highest of the rank methods and 
-  far above Pearson (which collapses).
-- Null behavior: Λₛ is well centered, approximately symmetric, and has a
-  slightly heavier null tail than Spearman.
-- Symmetric: rho_RA(x, y) == rho_RA(y, x).
-- Invariant to strictly monotone transforms of x or y (rank-based).
+
+- **Range:** Λₛ ∈ \([-1,1]\)
+- **Robust: Very robust to outliers and noise**; extremely high sign-breakdown 
+                  point (median-of-slopes core) with adversarial contamination
+                  (see /results/*Robustness*.png).
+- **Less biased:** Much less biased than Spearman or Kendall relative to Pearson 
+                  (see /results/*bias*.png).
+- **Accurate: Competitive or superior in accuracy** for moderate–strong signals.
+- **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with var_opt/var_Λₛ = (1/N)/(1.112^2/N).
+                  (Siegal median of medians is ~37%). 
+                  See /results/*efficiency*.png and /results/*power*.png
+- **Null distribution:** centered, symmetric, slightly heavier tails than Spearman.
+- **Symmetric:** Λₛ(x,y) == Λₛ(y,x).
+- **Invariant** under strictly monotone transforms.
+
+---
+
+## p-values
+
+Lambda supports three p-value modes:
+
+### `ptype="default"` (recommended)
+- **n < 25** → Monte Carlo **permutation test**.
+- **n ≥ 25** → **asymptotic Edgeworth approximation**.
+
+### `ptype="perm"`
+- Monte Carlo permutation p-values,
+- Valid with **ties or arbitrary marginals**,
+- Early stopping when p-uncertainty < `p_tol`,
+
+### `ptype="asymp"`
+- Fast asymptotic p-values.
+- Best for low ties or larger n.
+- Calibrated from very large unconditional Monte Carlo null distributions.
+
+The permutation test samples from the *conditional* null distribution,
+generated by permuting the observed y-values while keeping x fixed.
+This distribution depends on the observed marginal distributions and tie structure.
+    
+In contrast, the asymptotic p-values approximate the *unconditional* null 
+distribution of Λ, calibrated from extremely large independent Monte Carlo 
+simulations. As a result, the asymptotic p-values may be more accurate and more 
+stable than permutation p-values, especially for moderate n, skewed data, or 
+substantial ties.
+
+### Returned values
+```
+Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a
+```
+Where:
+
+- **Λₛ** — symmetric correlation.
+- **Λ(Y|X)** / **Λ(X|Y)** — asymmetric directional correlations.
+- **p-values** correspond to the chosen `alt = {"two-sided","greater","less"}`.
+- **Λₐ** — normalized asymmetry index with range [0, 1].
+```
+  \[
+  \Lambda_a = \frac{|\Lambda_{yx}-\Lambda_{xy}|}{|\Lambda_{yx}|+|\Lambda_{xy}|}
+  \]
+```
+
+---
     
 ## Installation
-The library targets Python 3.8+ and requires NumPy and Numba (for speed).
+The library targets Python 3.8+ and uses NumPy and Numba for speed.
 
 ```bash
-pip install numba numpy
 
-#Some statistical tests that are not the main function make use of SciPy
-pip install scipy
-
-# optional for fast math optimizations on Intel CPUs
-pip install icc_rt
-
-#Install hyper-corr from pypi with pip
+#Install lambda-corr from pypi with pip
 pip install lambda-corr
 
-# or local install from source
+#Or local install from source
 pip install -e .
+
+#Prerequisites if necessary
+pip install numba numpy
+
+#Optional: statistical tests make use of SciPy
+pip install scipy
+
+#Optional: for Numba fast math optimizations on Intel CPUs
+pip install icc_rt
 
 ```
 
+Requirements:
+- Python ≥ 3.8  
+- NumPy ≥ 1.23
+- Numba ≥ 0.61
+- SciPy ≥ 1.9 (only needed for some validation tests)
+
 ## Quick Example
+Compute the symmetric Lambda correlation Λ_s and its directional components
+for a simple monotonic relationship:
 ```python
+
 import numpy as np
 import math
 from lambda_corr import lambda_corr
@@ -128,14 +173,26 @@ from lambda_corr import lambda_corr
 rng = np.random.default_rng(seed=0)
 
 n = 50
-rho = 0.5 #correlation strength
+rho = 0.5   # correlation strength
 x = rng.standard_normal(n)
 z = rng.standard_normal(n)
-c = math.sqrt(max(1e-12, 1.0 - rho * rho))
-y = np.exp(rho * x + c * z) #any monotonic function
+c = math.sqrt((1 - rho) * (1 + rho))
+y = np.exp(rho * x + c * z)   # any monotonic transformation
 
-#Lambda_s will be close to rho
-Lambda_s, p_S, Lambda_xy, p_xy, Lambda_yx, p_yx, Lambda_A = lambda_corr(x,y)
+# Compute Lambda correlations
+Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a = lambda_corr(x, y)
+
+# Nicely formatted output
+print(f"Λ_s       = {Lambda_s: .4f}   (p = {p_s: .4g})")
+print(f"Λ(y|x)    = {Lambda_yx: .4f}   (p = {p_yx: .4g})")
+print(f"Λ(x|y)    = {Lambda_xy: .4f}   (p = {p_xy: .4g})")
+print(f"Asymmetry = {Lambda_a: .4f}")
+
+# Example output:
+# Λ_s       =  0.4130   (p =  0.0087)     #Result will be close to rho
+# Λ(y|x)    =  0.4145   (p =  0.008419)
+# Λ(x|y)    =  0.4114   (p =  0.008988)
+# Asymmetry =  0.0038
 
 ```
 
@@ -154,9 +211,9 @@ Lambda_s, p_S, Lambda_xy, p_xy, Lambda_yx, p_yx, Lambda_A = lambda_corr(x,y)
 
 ## Implementation Notes
 - Skip vertical pairs where rxt[j] == rxt[i].
-- If all slopes for an i are undefined (e.g., all rxt equal), set b_i = NaN and
-  ignore in the outer mean; if all b_i are NaN, return NaN.
-- If asymmetric Λ_xy/Λ_yx have opposite signs Λ_s is taken as zero.
+- If all slopes for an i are undefined (e.g., all rxt equal), its contribution is 
+  NaN and is ignored.
+- If asymmetric Λ_xy/Λ_yx have opposite signs Λₛ is taken as zero.
     
 ## References
 [1] Spearman, C. The proof and measurement of association between two things. 
@@ -173,6 +230,23 @@ Lambda_s, p_S, Lambda_xy, p_xy, Lambda_yx, p_yx, Lambda_A = lambda_corr(x,y)
 - Numba ≥ 0.61
 - SciPy ≥ 1.9 #If needed for verification of statistical testing
 
+## Citation
+If you use lambda_corr in academic or scientific work, please cite:
+```bash
+Lundquist, J.P.  lambda_corr: Robust Repeated-Average-Rank Correlation Λ (Lambda).
+GitHub repository: https://github.com/JonPaulLundquist/lambda_corr
+```
+
+```bash
+@misc{lundquist2025lambda_corr,
+  author       = {Lundquist, Jon Paul},
+  title        = {lambda\_corr: Robust Repeated-Average-Rank Correlation (Λ)},
+  year         = {2025},
+  publisher    = {GitHub},
+  howpublished = {\url{https://github.com/JonPaulLundquist/lambda_corr}},
+  note         = {Version X.Y.Z. Accessed: YYYY-MM-DD}
+}
+```
 ## License
 This project is licensed under the MIT license.  
 See the full text in [LICENSE](./LICENSE).
