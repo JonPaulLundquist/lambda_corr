@@ -11,24 +11,26 @@ based on **pairwise rank slopes**. Compared with traditional rank-based measures
 - Slightly less efficient asymptotically (~81% vs. ~91% for ρ and τ). 
   See /results/\*efficiency\*.png and /results/\*power\*.png (code for figures is in /tests/test_lambdacorr2.py)
   
-The canonical statistic, **Λₛ**, combines a robust median-of-pairwise-slopes inner 
+The canonical statistic, **Λ$\mathbf{_s}$**, combines a robust median-of-pairwise-slopes inner 
 loop with an efficient outer mean (repeated-average, inspired by Seigel's repeated-median [4]), 
 and uses a **signed geometric-mean symmetrization**, mirroring how:
 
-- **Kendall’s τ_b** can be written as the signed geometric mean of **Somers’ D(Y|X)** and **D(X|Y)**;
+- **Kendall’s τ$\mathbf{_b}$** can be written as the signed geometric mean of **Somers’ D(y|x)** and **D(y|x)**;
 - **Pearson’s r** is the signed geometric mean of the two OLS slopes
-      $m_{Y\mid X} = \dfrac{\mathrm{cov}(X,Y)}{\mathrm{var}(X)}$ and $m_{X\mid Y} = \dfrac{\mathrm{cov}(X,Y)}{\mathrm{var}(Y)}$;
+      $m_{Y\mid X} = \dfrac{\mathrm{cov}(x,y)}{\mathrm{var}(x)}$ and $m_{x\mid y} = \dfrac{\mathrm{cov}(x,y)}{\mathrm{var}(y)}$;
 - **Spearman’s ρ** has the same construction applied to the **rank-transformed**
-  variables \(r_X, r_Y\).
+  variables \(r$_x$, r$_y$\).
   
 Λₛ extends this same geometric-mean construction to **robust repeated-average-rank correlations**
 and ensures interpretability as a standard measure of monotonic trend/association.
 
 ---
 
-## Canonical Definition of Λₛ
+## Canonical Definition of Λ$_s$
 
 Given paired samples $(x_i, y_i)$, $i = 1,\dots,n$:
+
+0. **Overview:** Symmetrize the asymmetric $Λ_{yx/xy} = \underset{\substack{i}}{\mathrm{mean}}\;\underset{\substack{j \ne i }}  {\mathrm{median}}\; \mathrm{slope}(i, j)$ in standardized rank space.
 
 1. Compute **average ranks**:
 ```python
@@ -41,22 +43,28 @@ ry = rankdata(y, method="average")
 rxt = (rx - np.mean(rx)) / np.std(rx)
 ryt = (ry - np.mean(ry)) / np.std(ry)
 ```
-
+Doesn't affect Λ$_s$. Affects asymmetric Λ$_{yx}$/Λ$_{xy}$ when there are ties. Tests using 
+Somers' D better agree on asymmetry when standardization is done e.g. on binary data.
+    
 3. For each anchor point sample *i*, compute the **median slope in rank space**:
 
 $$
-b_i = \mathrm{median}_{j \ne i,\; rxt[j] \ne rxt[i]}
-      \frac{\,ryt[j] - ryt[i]\,}{\,rxt[j] - rxt[i]\,}
+b_i = 
+\underset{\substack{j \ne i \\ rxt[j] \ne rxt[i]}}{\mathrm{median}}
+\left(
+   \frac{\,ryt[j] - ryt[i]\,}{\,rxt[j] - rxt[i]\,}
+\right)
 $$
 
+
 4. Compute the **asymmetric** rank-slope correlations as the outer mean over i slopes:
-- **Λ(Y|X)**:
+- **Λ(y|x)**:
 
 $$
 \Lambda_{yx} = \frac{1}{n} \sum_i b_i
 $$
 
-- **Λ(X|Y)**: repeat with x and y swapped.
+- **Λ(x|y)**: repeat with x and y swapped.
 
 5. Define the **symmetric** Lambda:
 
@@ -64,13 +72,14 @@ $$
 \Lambda_s = \mathrm{sgn}(\Lambda_{yx}) \sqrt{\left|\Lambda_{yx}\Lambda_{xy}\right|}
 $$
 
-If the asymmetric signs disagree (rare under the null), Λₛ = 0.
+If the asymmetric signs disagree (rare under the null), Λ$_s$ = 0. Kendall's τ is 
+on average approximately zero in these cases (see /tests/test_opposites.py).
 
 ---
 
 ## Properties
 
-- **Range:** Λₛ ∈ \([-1,1]\)
+- **Range:** Λ$_s$ ∈ \([-1,1]\)
 - **Robust: Very robust to outliers and noise**; extremely high sign-breakdown 
                   point (median-of-slopes core) with adversarial contamination
                   (see /results/\*Robustness\*.png).
@@ -78,10 +87,10 @@ If the asymmetric signs disagree (rare under the null), Λₛ = 0.
                   (see /results/\*bias\*.png).
 - **Accurate: Competitive or superior in accuracy** for moderate–strong signals.
 - **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with var_opt/var(Λₛ) = (1/N)/(1.112^2/N).
-                  (Siegal median of medians is ~37%). 
+                  (Siegal median of medians slope is ~41%). 
                   See /results/\*efficiency\*.png and /results/\*power\*.png
 - **Null distribution:** centered, symmetric, slightly heavier tails than Spearman.
-- **Symmetric:** Λₛ(x,y) == Λₛ(y,x).
+- **Symmetric:** Λ$_s(x,y)$ == Λ$_s(x,y)$.
 - **Invariant** under strictly monotone transforms.
 
 ---
@@ -120,10 +129,10 @@ Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a
 ```
 Where:
 
-- **Λₛ** — symmetric correlation.
-- **Λ(Y|X)** / **Λ(X|Y)** — asymmetric directional correlations.
+- **Λ$\mathbf{_s}$** — symmetric correlation.
+- **Λ(y|x)** / **Λ(x|y)** — asymmetric directional correlations.
 - **p-values** correspond to the chosen `alt = {"two-sided","greater","less"}`.
-- **Λₐ** — normalized asymmetry index with range [0, 1].
+- **Λ$\mathbf{_a}$** — normalized asymmetry index with range [0, 1].
 
 $$
 \Lambda_a = \frac{\bigl|\Lambda_{yx} - \Lambda_{xy}\bigr|}
@@ -163,7 +172,7 @@ Requirements:
 - SciPy ≥ 1.9 (only needed for some validation tests)
 
 ## Quick Example
-Compute the symmetric Lambda correlation Λ_s and its directional components
+Compute the symmetric Lambda correlation Λ$_s$ and its directional components
 for a simple monotonic relationship:
 ```python
 
@@ -206,16 +215,16 @@ print(f"Asymmetry = {Lambda_a: .4f}")
   compared to mean of medians.
 - Continuum of Lambda variants behavior (outside loop - inside loop):
 
-  Spearman (ρ) ≈ Λₛ^(mean-mean)  <->  Λₛ^(mean-median)  <-> Λₛ^(median-mean)  <->  Λₛ^(median-median) ≈ Siegel
+  Spearman (ρ) ≈ Λ$_s^{(mean-mean)}$  <->  Λ$_s^{(mean-median)}$  <-> Λ$_s^{(median-mean)}$  <->  Λ$_s^{(median-median)}$ ≈ Siegel's slope
   
-  Canonical choice: Λₛ^(mean-median) — best efficiency/robustness balance 
+  Canonical choice: Λ$_s^{(mean-median)}$ — best efficiency/robustness balance 
                                               especially at low statistics)
 
 ## Implementation Notes
 - Skip vertical pairs where rxt[j] == rxt[i].
 - If all slopes for an i are undefined (e.g., all rxt equal), its contribution is 
   NaN and is ignored.
-- If asymmetric Λ_xy/Λ_yx have opposite signs Λₛ is taken as zero.
+- If asymmetric Λ$_{xy}$/Λ$_{yx}$ have opposite signs Λ$_s$ is taken as zero.
     
 ## References
 [1] Spearman, C. The proof and measurement of association between two things. 

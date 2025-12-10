@@ -340,7 +340,10 @@ def _rankdata_avg_ties(x, n):
 def _std_ranks(a, n):
     r = _rankdata_avg_ties(a, n) #scipy.stats.rankdata(a, method='average')
 
-    r = (r - np.mean(r)) / np.std(r) # Numba-compatible, ddof=0
+    # Doesn't affect Lambda_s. Affects Lambda_yx/Lambda_xy when there are ties.
+    # Tests using Somers' D better agree on asymmetry when standardization is done
+    # e.g. on binary data.
+    r = (r - np.mean(r)) / np.std(r)
     return r
 
 @njit(cache=True, nogil=True, inline='always')
@@ -355,7 +358,8 @@ def _lambda_stats(rx, ry, n):
     if (not np.isfinite(prod)) or (prod <= 0.0):
         #What to do when asymmetrical measures disagree on sign of correlation.
         #A numerical oddity; fall back to 0 with disagreeing directions. 
-        #This only happens for small Lambda_asym<0.05 for null distributions and is rare.
+        #This only happens for small Lambda_asym<0.05 for null distributions, is rare, 
+        #and Kendall's tau is on average approximately zero.
         #Setting to zero is a choice and there are a few different options
         Lambda_s = 0.0
     else:
@@ -439,7 +443,7 @@ def _lambda_p_asymptotic(Lambda_s, n, alt="two-sided"):
     def kurt_model(n, A, B):
         return -A / n - B / n**2
 
-    #test_limit.py confirmed there probably was an asymptotic distribution.
+    #/tests/test_limit.py confirmed there is an asymptotic distribution.
     #Fit using /tests/find_limit.py functions. Validated with test_asymp.py.
     sig0 = sigma_model(n, 1.1118112478, 0.5263109338, 0.699885)
     kurt0 = kurt_model(n, 11.2182780407, -63.0789971809)
@@ -468,7 +472,7 @@ def _lambda_p_asymptotic(Lambda_s, n, alt="two-sided"):
         return P_z
 
 
-#@njit(cache=True, nogil=True)
+#@njit(cache=True, nogil=True) #njit not compatible with warnings
 def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt="two-sided"):
     
     if pvals not in [True, False]:
@@ -505,7 +509,7 @@ def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt
     if n_perm < min_needed:
         warnings.warn(
             f"n_perm={n_perm} possibly too small for p_tol={p_tol}; "
-            f"use {min_needed} permutations for stable p-values.",
+            f"use n_perm>{min_needed} permutations for stable p-values.",
             UserWarning
         )
     
