@@ -61,8 +61,7 @@ $$
 5. Define the **symmetric** Lambda:
 
 $$
-\Lambda_s = \mathrm{sgn}(\Lambda_{yx})\,
-            \sqrt{\left( \left|\Lambda_{yx}\Lambda_{xy}\right| \right)}
+\Lambda_s = \mathrm{sgn}(\Lambda_{yx}) \sqrt{\left|\Lambda_{yx}\Lambda_{xy}\right|}
 $$
 
 If the asymmetric signs disagree (rare under the null), Λₛ = 0.
@@ -78,7 +77,7 @@ If the asymmetric signs disagree (rare under the null), Λₛ = 0.
 - **Less biased:** Much less biased than Spearman or Kendall relative to Pearson 
                   (see /results/\*bias\*.png).
 - **Accurate: Competitive or superior in accuracy** for moderate–strong signals.
-- **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with var_opt/var_Λₛ = (1/N)/(1.112^2/N).
+- **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with var_opt/var(Λₛ) = (1/N)/(1.112^2/N).
                   (Siegal median of medians is ~37%). 
                   See /results/\*efficiency\*.png and /results/\*power\*.png
 - **Null distribution:** centered, symmetric, slightly heavier tails than Spearman.
