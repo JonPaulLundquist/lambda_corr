@@ -51,6 +51,7 @@ $$
 
 4. Compute the **asymmetric** rank-slope correlations as the outer mean over i slopes:
 - **Λ(Y|X)**:
+
 $$
 \Lambda_{yx} = \frac{1}{n} \sum_i b_i
 $$
@@ -60,8 +61,7 @@ $$
 5. Define the **symmetric** Lambda:
 
 $$
-\Lambda_s = \mathrm{sgn}(\Lambda_{yx})\,
-            \sqrt{\bigl|\Lambda_{yx}\,\Lambda_{xy}\bigr|}
+\Lambda_s = \mathrm{sgn}(\Lambda_{yx})\sqrt{|\Lambda_{yx}\Lambda_{xy}|}
 $$
 
 If the asymmetric signs disagree (rare under the null), Λₛ = 0.
@@ -129,6 +129,7 @@ $$
 \Lambda_a = \frac{\bigl|\Lambda_{yx} - \Lambda_{xy}\bigr|}
                  {\bigl|\Lambda_{yx}\bigr| + \bigl|\Lambda_{xy}\bigr|}
 $$
+
 with $\Lambda_a \in [0,1]$.
 
 ---
