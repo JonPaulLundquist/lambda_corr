@@ -65,39 +65,43 @@ def search_for_opposite_signs(n_trials=10000, seed_start=0):
             y[:mid] = x[:mid] + 0.3 * rng.standard_normal(mid)
             y[mid:] = -x[mid:] + 0.3 * rng.standard_normal(n - mid)
 
-        try:
-            Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a = lambda_corr(
-                x, y, pvals=False
-            )
+        #try:
+        Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a = lambda_corr(
+            x, y, pvals=False
+        )
 
-            # Check for opposite signs
-            if np.isfinite(Lambda_yx) and np.isfinite(Lambda_xy):
-                if Lambda_yx * Lambda_xy < 0:  # Opposite signs
-                    found_cases.append({
-                        'trial': trial,
-                        'seed': seed_start + trial,
-                        'scenario': scenario,
-                        'n': n,
-                        'x': x.copy(),
-                        'y': y.copy(),
-                        'Lambda_s': Lambda_s,
-                        'Lambda_yx': Lambda_yx,
-                        'Lambda_xy': Lambda_xy,
-                        'Lambda_a': Lambda_a
-                    })
+        # Check for opposite signs
+        if np.isfinite(Lambda_yx) and np.isfinite(Lambda_xy):
+            if Lambda_yx * Lambda_xy < 0:  # Opposite signs
+                ties_x = len(x) != len(np.unique(x))
+                ties_y = len(y) != len(np.unique(y))
+                any_ties = ties_x or ties_y
+                found_cases.append({
+                    'trial': trial,
+                    'seed': seed_start + trial,
+                    'scenario': scenario,
+                    'n': n,
+                    'x': x.copy(),
+                    'y': y.copy(),
+                    'Lambda_s': Lambda_s,
+                    'Lambda_yx': Lambda_yx,
+                    'Lambda_xy': Lambda_xy,
+                    'Lambda_a': Lambda_a,
+                    'any_ties': any_ties
+                })
 
-                    print(f"Found case #{len(found_cases)} at trial {trial} (seed={seed_start + trial}):")
-                    print(f"  n = {n}, scenario = {scenario}")
-                    print(f"  Λ_s       = {Lambda_s: .6f}")
-                    print(f"  Λ(y|x)    = {Lambda_yx: .6f}")
-                    print(f"  Λ(x|y)    = {Lambda_xy: .6f}")
-                    print(f"  Asymmetry = {Lambda_a: .6f}")
-                    print(f"  x = {x}")
-                    print(f"  y = {y}")
-                    print("-" * 70)
+                print(f"Found case #{len(found_cases)} at trial {trial} (seed={seed_start + trial}):")
+                print(f"  n = {n}, scenario = {scenario}")
+                print(f"  Λ_s       = {Lambda_s: .6f}")
+                print(f"  Λ(y|x)    = {Lambda_yx: .6f}")
+                print(f"  Λ(x|y)    = {Lambda_xy: .6f}")
+                print(f"  Asymmetry = {Lambda_a: .6f}")
+                print(f"  x = {x}")
+                print(f"  y = {y}")
+                print("-" * 70)
 
-        except Exception as e:
-            pass  # Skip any errors
+        # except Exception as e:
+        #     pass  # Skip any errors
 
     print(f"\n{'=' * 70}")
     print(f"Search complete: Found {len(found_cases)} cases out of {n_trials} trials")
@@ -171,7 +175,7 @@ if __name__ == "__main__":
             rho_values.append(rho)
             lambda_values.append(np.abs(l_yx))
             lambda_values.append(np.abs(l_xy))
-            print(f"Case {i+1}: Λ(y|x)={case['Lambda_yx']:+.4f}, "
+            print(f"Case {i+1}, Scenario {case['scenario']}: Λ(y|x)={case['Lambda_yx']:+.4f}, "
                   f"Λ(x|y)={case['Lambda_xy']:+.4f}, "
                   f"Kendall τ={tau:+.6f}, "
                   f"Spearman ρ={rho:+.6f}")
@@ -180,7 +184,23 @@ if __name__ == "__main__":
         print("SUMMARY STATISTICS:")
         print("=" * 70)
         print(f"  Total cases found: {len(cases)}")
-
+        scenario_counts = [0]*5
+        for c in cases:
+            scenario_counts[c['scenario']] += 1
+        
+        print("\n  Cases per scenario (among found cases):")
+        for s, count in enumerate(scenario_counts):
+            print(f"    Scenario {s}: {count}")
+    
+        # count cases with *any* ties per scenario
+        cases_with_ties = {s: 0 for s in range(5)}
+        for c in cases:
+            if c['any_ties']:
+                cases_with_ties[c['scenario']] += 1
+        print("\n  Cases with ANY ties per scenario:")
+        for s in range(5):
+            print(f"    Scenario {s}: {cases_with_ties[s]}")
+    
         print(f"\n  Lambda_xy, Lambda_yx:")
         print(f"    Mean:  {np.mean(lambda_values):+.6f}")
         print(f"    Std:   {np.std(lambda_values):.6f}")

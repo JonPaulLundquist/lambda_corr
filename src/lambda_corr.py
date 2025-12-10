@@ -340,9 +340,10 @@ def _rankdata_avg_ties(x, n):
 def _std_ranks(a, n):
     r = _rankdata_avg_ties(a, n) #scipy.stats.rankdata(a, method='average')
 
-    # Doesn't affect Lambda_s. Affects Lambda_yx/Lambda_xy when there are ties.
+    # Doesn't affect Lambda_s. Affects Lambda_yx/Lambda_xy, the most when there are ties.
     # Tests using Somers' D better agree on asymmetry when standardization is done
-    # e.g. on binary data.
+    # e.g. on binary data. Decreases the number of sign disagreements for 
+    #Lambda_yx/Lambda_xy for various scenarios see /tests/test_opposites.py
     r = (r - np.mean(r)) / np.std(r)
     return r
 
