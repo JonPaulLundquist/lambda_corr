@@ -61,7 +61,8 @@ $$
 5. Define the **symmetric** Lambda:
 
 $$
-\Lambda_s = \mathrm{sgn}(\Lambda_{yx})\sqrt{|\Lambda_{yx}\Lambda_{xy}|}
+\Lambda_s = \mathrm{sgn}(\Lambda_{yx})\,
+            \sqrt{\left( \left|\Lambda_{yx}\Lambda_{xy}\right| \right)}
 $$
 
 If the asymmetric signs disagree (rare under the null), Λₛ = 0.
