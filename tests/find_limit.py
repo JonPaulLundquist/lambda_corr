@@ -644,5 +644,3 @@ if __name__ == "__main__":
     ax.legend()
     fig.tight_layout()
     plt.show()
-    
-    

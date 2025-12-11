@@ -154,4 +154,3 @@ for r in rows_rho07:
 skews = [r['skew'] for r in rows if r['rho']==0.4]
 ns = np.array([r['n'] for r in rows if r['rho']==0.4])
 plt.loglog(ns, np.abs(skews), '-o'); plt.xlabel('n'); plt.ylabel('|skew|');
-

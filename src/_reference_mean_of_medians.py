@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Jon Paul Lundquist
 """
 Created on Tue Dec  9 14:54:51 2025
 
-@author: jplundquist
+@author: Jon Paul Lundquist
 """
 from numba import njit
 import numpy as np

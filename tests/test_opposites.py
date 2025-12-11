@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Jon Paul Lundquist
 """
 Created on Wed Dec 10 11:56:45 2025
 
-@author: jplundquist
+@author: Jon Paul Lundquist
 """
 
 import numpy as np
