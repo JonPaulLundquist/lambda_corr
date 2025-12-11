@@ -340,7 +340,7 @@ def _rankdata_avg_ties(x, n):
 def _std_ranks(a, n):
     r = _rankdata_avg_ties(a, n) #scipy.stats.rankdata(a, method='average')
 
-    # Doesn't affect Lambda_s. Affects Lambda_yx/Lambda_xy, the most when there are ties.
+    # Doesn't affect Lambda_s. Affects Lambda_yx/Lambda_xy, the mostly when there are ties.
     # Tests using Somers' D better agree on asymmetry when standardization is done
     # e.g. on binary data. Decreases the number of sign disagreements for 
     #Lambda_yx/Lambda_xy for various scenarios see /tests/test_opposites.py
@@ -478,68 +478,79 @@ def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt
     
     if pvals not in [True, False]:
         raise ValueError(f"pvals must be True or False, got '{pvals}'")
+    
+    if pvals:
+        if ptype not in ["default", "perm", "asymp"]:
+            raise ValueError(f"ptype must be 'default', 'perm', or 'asymp', got '{ptype}'")
         
-    if ptype not in ["default", "perm", "asymp"]:
-        raise ValueError(f"ptype must be 'default', 'perm', or 'asymp', got '{ptype}'")
-    
-    # --- p_tol checks ---
-    # Basic domain check
-    if not (0 < p_tol < 1):
-        raise ValueError("p_tol must be in the interval (0, 1).")
-    # Practical lower bound
-    if p_tol < 1e-15:
-        raise ValueError("p_tol is too small to be practical; use p_tol ≥ 1e-15.")
-    # Very small but allowed: warn
-    if p_tol < 1e-10:
-        warnings.warn(
-            f"p_tol={p_tol:g} is extremely small; detecting >6σ effects requires a very "
-            "large n_perm for stable permutation p-values.",
-            UserWarning,
-        )
-    
-    if alt not in ["two-sided", "greater", "less"]:
-        raise ValueError(f"alt must be 'two-sided', 'greater', or 'less', got '{alt}'")
-    
-    # --- n_perm checks ---
-    n_perm = int(n_perm)
-    if n_perm < 1:
-        raise ValueError("n_perm must be an integer ≥ 1")
-    
-    min_needed = int(1.0 / p_tol)
-    
-    if n_perm < min_needed:
-        warnings.warn(
-            f"n_perm={n_perm} possibly too small for p_tol={p_tol}; "
-            f"use n_perm>{min_needed} permutations for stable p-values.",
-            UserWarning
-        )
-    
+        if alt not in ["two-sided", "greater", "less"]:
+            raise ValueError(f"alt must be 'two-sided', 'greater', or 'less', got '{alt}'")
+
     x = np.asarray(x)
     y = np.asarray(y)
     n = x.size
-    if n_perm < n:
-        warnings.warn(
-            f"n_perm={n_perm} is smaller than sample size n={n}; "
-            "for stable permutation p-values, using n_perm ≥ n is strongly recommended.",
-            UserWarning
-        )
-
+    
     if n != y.size or n < 3:
         raise ValueError("x and y must be same length, n >= 3")
-    
+        
     # Remove pairs where either x or y is not finite
     indx = np.isfinite(x) & np.isfinite(y)
-    m = np.sum(indx)
-    if m < 3:
+    n = np.sum(indx)
+    if n < 3:
         # Not enough valid data
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     x = x[indx]
     y = y[indx]
-    n = m
+
     if np.std(x) == 0 or np.std(y) == 0:
         #Constant input: the correlation coefficient is undefined.
         return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
+    
+    # Will we actually use permutation p-values?
+    use_perm_pvals = (
+        pvals and (
+            ptype == "perm" or
+            (ptype == "default" and n < 25)
+        )
+    )
+
+    n_perm = int(n_perm) #even if isn't used it should be what numba expects
+    if use_perm_pvals:
+        # --- p_tol checks ---
+        # Basic domain check
+        if not (0 < p_tol < 1):
+            raise ValueError("p_tol must be in the interval (0, 1).")
+        # Practical lower bound
+        if p_tol < 1e-15:
+            raise ValueError("p_tol is too small to be practical; use p_tol ≥ 1e-15.")
+        # Very small but allowed: warn
+        if p_tol < 1e-10:
+            warnings.warn(
+                f"p_tol={p_tol:g} is extremely small; detecting >6σ effects requires a very "
+                "large n_perm for stable permutation p-values.",
+                UserWarning,
+            )
+        
+        # --- n_perm checks ---
+        if n_perm < 1:
+            raise ValueError("n_perm must be an integer ≥ 1")
+        
+        if n_perm < n:
+            warnings.warn(
+                f"n_perm={n_perm} is smaller than sample size n={n}; "
+                "for stable permutation p-values, using n_perm ≥ n is strongly recommended.",
+                UserWarning
+            )
+   
+        min_needed = int(1.0 / p_tol)
+        
+        if n_perm < min_needed:
+            warnings.warn(
+                f"n_perm={n_perm} possibly too small for p_tol={p_tol}; "
+                f"use n_perm>{min_needed} permutations for stable p-values.",
+                UserWarning
+            )
 
     # Standardized ranks with averaged ties
     rx = _std_ranks(x, n)
@@ -547,7 +558,6 @@ def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt
     # Get Lambda correlations - symmetric and asymmetric
     Lambda_s, Lambda_yx, Lambda_xy  = _lambda_stats(rx, ry, n)
     
-    n_perm = int(n_perm)
     if pvals:
         if (ptype=="default" and (n < 25)) or ptype=="perm":
                 p_s, p_yx, p_xy = _lambda_pvals(rx, ry, n, Lambda_s, Lambda_yx, Lambda_xy, 
