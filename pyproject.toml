@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "lambda_corr"
+name = "lambda-corr"
 version = "0.1.0"
 description = "Repeated-Average-Rank Correlations Λ (Lambda): a family of robust, symmetric/asymmetric measures of monotone association based on pairwise rank slopes."
 readme = { file = "README.md", content-type = "text/markdown" }

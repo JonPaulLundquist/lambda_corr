@@ -208,7 +208,13 @@ import numpy as np
 from math import erf, sqrt, exp, pi
 from numba import njit, objmode #, prange
 import warnings
+from importlib.metadata import version, PackageNotFoundError
 
+try:
+    __version__ = version("lambda-corr")
+except PackageNotFoundError:
+    __version__ = "0.0.0"
+    
 # --- utilities: nanmean on first k items, in-place quickselect kth ---
 @njit(cache=True, nogil=True, inline='always')
 def _nanmean_k(a, k):
