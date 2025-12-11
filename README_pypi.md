@@ -22,7 +22,7 @@ Comparison vs Pearson's r, Spearman’s ρ and Kendall’s τ.
 <td>
 
 <p align="center">
-  <img src="https://github.com/JonPaulLundquist/lambda_corr/tree/main/results/rho1_Robustness_UniformContamination_N100.png" width="350">
+  <img src="https://raw.githubusercontent.com/JonPaulLundquist/lambda_corr/refs/heads/main/results/rho1_Robustness_UniformContamination_N100.png" width="350">
 </p>
 
 </td>
@@ -47,7 +47,7 @@ Comparison vs Pearson's r, Spearman’s ρ and Kendall’s τ.
 <td>
 
 <p align="center">
-  <img src="https://github.com/JonPaulLundquist/lambda_corr/tree/main/results/rho_bias_N100.png" width="350">
+  <img src="https://raw.githubusercontent.com/JonPaulLundquist/lambda_corr/refs/heads/main/results/rho_bias_N100.png" width="350">
 </p>
 
 </td>
@@ -71,7 +71,7 @@ Comparison vs Pearson's r, Spearman’s ρ and Kendall’s τ.
 <td>
 
 <p align="center">
-  <img src="https://github.com/JonPaulLundquist/lambda_corr/tree/main/results/rho_accuracy_N100.png" width="350">
+  <img src="https://raw.githubusercontent.com/JonPaulLundquist/lambda_corr/refs/heads/main/results/rho_accuracy_N100.png" width="350">
 </p>
 
 </td>
@@ -96,7 +96,7 @@ Comparison vs Pearson's r, Spearman’s ρ and Kendall’s τ.
 <td>
 
 <p align="center">
-  <img src="https://github.com/JonPaulLundquist/lambda_corr/tree/main/results/rho_efficiency_N100.png" width="350">
+  <img src="https://raw.githubusercontent.com/JonPaulLundquist/lambda_corr/refs/heads/main/results/rho_efficiency_N100.png" width="350">
 </p>
 
 </td>
@@ -175,15 +175,15 @@ If the asymmetric signs disagree (rare under the null), **Λ_s** = 0. Kendall's 
 ## Properties
 
 - **Range:** **Λ_s** ∈ [-1,1].
-- **Symmetric:** Λ_s(x,y) == Λ_s(y,x).
-- **Invariant under strictly monotone transforms:** Λ_s(x, y) is unchanged under x → f(x) or y → g(y) for any strictly monotone functions ***f***, ***g***.
+- **Symmetric:** **Λ_s**(x,y) == **Λ_s**(y,x).
+- **Invariant under strictly monotone transforms:** **Λ_s**(x, y) is unchanged under x → **f**(x) or y → **g**(y) for any strictly monotone functions ***f***, ***g***.
 - **Robust: Very robust to outliers and noise**; extremely high sign-breakdown 
                   point (median-of-slopes core) with adversarial contamination
                   (see [github /results/\*Robustness\*.png](https://github.com/JonPaulLundquist/lambda_corr/tree/main/results)).
 - **Less biased:** Much less biased than Spearman or Kendall relative to Pearson without transforms
                   (see [github /results/\*bias\*.png](https://github.com/JonPaulLundquist/lambda_corr/tree/main/results)).
 - **Accurate: Competitive or superior in accuracy** for moderate–strong signals.
-- **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with var_opt/var(Λ_s) = (1/N)/(1.112^2/N).
+- **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with var_opt/var(**Λ_s**) = (1/N)/(1.112^2/N).
                   (Siegel median of medians slope is ~41%). 
                   See [github /results/\*efficiency\*.png](https://github.com/JonPaulLundquist/lambda_corr/tree/main/results) and [/results/\*power\*.png](https://github.com/JonPaulLundquist/lambda_corr/tree/main/results)
 - **Null distribution:** centered, symmetric, slightly heavier tails than Spearman.
@@ -231,7 +231,7 @@ method can be more accurate because it automatically reflects the correct amount
 and pattern of ties.
 
 In contrast, the asymptotic p-values approximate the *unconditional* null distribution 
-of Λ, calibrated from extremely large Monte Carlo simulations. As a result, they 
+of **Λ**, calibrated from extremely large Monte Carlo simulations. As a result, they 
 tend to be more stable and often more accurate for moderate–large n, especially 
 when the *underlying population is continuous* (even if the sample exhibits ties 
 due to rounding, censoring, or finite precision) or when the data are skewed.
