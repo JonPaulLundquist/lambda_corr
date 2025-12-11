@@ -213,13 +213,15 @@ Lambda supports three p-value modes:
 - **n ≥ 25** → **asymptotic Edgeworth approximation**.
 
 ### `ptype="perm"`
-- Monte Carlo permutation p-values,
-- Valid with **ties or arbitrary marginals**,
-- Early stopping when p-uncertainty < `p_tol`,
+- Monte Carlo permutation p-values.
+- Valid with **ties or arbitrary marginals** (conditional, see below).
+- Early stopping when p-uncertainty < `p_tol`.
+- Fresh RNG drawn every call so permutation p-values vary across runs. 
+  This can give the user an idea of the p-value uncertainty, if they wish.
 
 ### `ptype="asymp"`
-- Fast asymptotic p-values.
-- Best for low ties or larger n. More ties -- less accurate.
+- **Fast** asymptotic p-values.
+- Best for low ties or larger n. More ties -- less accurate (conditional, see below).
 - Calibrated from very large unconditional Monte Carlo null distributions.
 
 The permutation test samples from the *conditional* null distribution, generated 
@@ -229,7 +231,7 @@ Therefore, when the *underlying population is genuinely discrete*, the permutati
 method can be more accurate because it automatically reflects the correct amount 
 and pattern of ties.
 
-In contrast, the asymptotic p-values approximate the unconditional null distribution 
+In contrast, the asymptotic p-values approximate the *unconditional* null distribution 
 of Λ, calibrated from extremely large Monte Carlo simulations. As a result, they 
 tend to be more stable and often more accurate for moderate–large n, especially 
 when the *underlying population is continuous* (even if the sample exhibits ties 
@@ -265,6 +267,9 @@ pip install lambda-corr
 
 #Or local install from source
 pip install -e .
+
+#Install optional test dependencies (SciPy)
+pip install -e .[tests]
 
 #Prerequisites if necessary
 pip install numba numpy
