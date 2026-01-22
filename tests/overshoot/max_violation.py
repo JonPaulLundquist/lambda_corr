@@ -1,264 +1,65 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Jon Paul Lundquist
 """
-Created on Wed Oct  8 19:56:06 2025
+Created on Mon Dec 15 01:41:46 2025
 
-    Repeated-Average Rank Correlation Λ (Lambda) 
-    
-    Introduction
-    ----------
-    The Repeated-Average Rank correlation Λ (Lambda) introduced here is a new family 
-    of robust, symmetric, and asymmetric measures of monotone association based on 
-    pairwise slopes in rank space. Compared with traditional rank-based measures 
-    (Spearman’s ρ and Kendall’s τ [1,2]), Lambda is more resistant to noise contamination 
-    and exhibits much less bias relative to Pearson’s linear correlation [3]. For moderate 
-    to strong signals, its estimation accuracy is comparable to, and can exceed, 
-    that of ρ and τ. These gains come at the cost of a modest reduction in asymptotic 
-    efficiency (≈81% vs. ≈91% for ρ and τ).
-    
-    Canonical definition of Λ_s
-    ---------------------------
-    Λ_s, is the symmetrized mean of the median of pairwise rank slopes (inspired by 
-    Siegel's repeated median slope [4]) that combines the high noise breakdown robustness 
-    of the repeated median with the unbiased symmetry of an outer mean, producing 
-    a measure that is more resistant to noise while retaining interpretability as a 
-    standard measure of monotonic trend/association.
-    
-    Let (x_i, y_i), i = 1..n. Let rx = ranks(x) and ry = ranks(y) (average ranks for
-    ties), then standardize to zero mean and unit variance:
-
-        rxt = (rx - mean(rx)) / std(rx)
-        ryt = (ry - mean(ry)) / std(ry)
-
-    For each anchor sample i, compute the median slope in rank space:
-
-        b_i = median_{j != i, rxt[j] != rxt[i]} ( (ryt[j] - ryt[i]) / (rxt[j] - rxt[i]) )
-
-    The asymmetric Lambda is the outer mean over i slopes (y given x):
-
-        Λ_yx = (1/n) * sum_i b_i
-    
-    Compute Λ_xy by swapping x and y. 
-    
-    A fold-back transform is applied to the asymmetric components to enforce the
-    conventional range [-1, 1], and to restore the correct ordering relative to τ/ρ, 
-    for extremely rare, highly structured near-(anti)monotone rank configurations
-    (see Fold-Back Transform section below):
-        
-        Λ_asym ← sign(Λ_asym) · exp(−|log|Λ_asym||) 
-    
-    Equivalently: Λ_asym is unchanged for |Λ_asym|≤1 and mapped to 1/Λ_asym for |Λ_asym|>1.
-    
-    The symmetric correlation Λ_s is the sign-preserving geometric mean:
-
-        Λ_s = sgn(Λ_yx) * sqrt(|Λ_yx * Λ_xy|)
-    
-    This construction mirrors classical correlation measures: Kendall’s τ_b can
-    be written as the signed geometric mean of the asymmetric Somers’ D
-    statistics D_{Y|X} and D_{X|Y}, and Pearson’s r can be written as the
-    signed geometric mean of the two ordinary least-squares regression slopes
-    m_{Y|X} = cov(X, Y) / var(X) and m_{X|Y} = cov(X, Y) / var(Y).
-    Λ_s extends this same geometric-mean symmetrization to robust repeated average 
-    rank-slope correlations.
-
-    Parameters
-    ----------
-    x, y : 1-D array_like 
-        Two input samples of equal length (n ≥ 3).
-    
-    pvals : {True, False}, optional
-        Whether to compute p-values. Default: True.
-        If False, all returned p-values are NaN and no permutation/asymptotic
-        p-value calculations are performed.
-
-    ptype : {"default", "asymp", "perm"}, optional
-        Method for p-value calculation. Default: "default".
-        
-        - "default": If n < 25, use a Monte Carlo permutation test. 
-                     If n ≥ 25, use asymptotic approximation.
-                     
-        - "asymp": Use asymptotic approximation  (Edgeworth expansion). Assumes 
-                   no ties; accuracy decreases as tie frequency increases.
-                   Note: The same null distribution is used for Λ_s, Λ_xy, 
-                   and Λ_yx, as they have matching null moments (mean, 
-                   variance, skewness, kurtosis) under independence.
-           
-        - "perm": Use Monte Carlo permutation test. Valid for any tie structure. 
-                  Note: This is approximate unless all permutations are
-                  enumerated, which is only feasible for very small n.
-                  The RNG is re-seeded from OS entropy for every call so
-                  permutation p-values vary across runs by default.
-                  
-        Note:
-            The permutation test samples from the *conditional* null distribution, generated 
-            by permuting the observed y-values while keeping x fixed. This distribution 
-            depends directly on the observed marginal distributions and tie structure. 
-            Therefore, when the *underlying population is genuinely discrete*, the permutation 
-            method can be more accurate because it automatically reflects the correct amount 
-            and pattern of ties.
-            
-            In contrast, the asymptotic p-values approximate the *unconditional* null distribution 
-            of Λ, calibrated from extremely large Monte Carlo simulations. As a result, they 
-            tend to be more stable and often more accurate for moderate–large n, especially 
-            when the *underlying population is continuous* (even if the sample exhibits ties 
-            due to rounding, censoring, or finite precision) or when the data are skewed.
-
-    p_tol : float, optional
-        Stopping tolerance on p-value uncertainty in the permutation test. 
-        Default: 1e-4.
-        Sampling stops early if p-value uncertainty falls below p_tol
-        (or once n_perm permutations are reached).
-    
-    n_perm : integer, optional
-        Maximum number of MC permutations for p-value estimation. Default: 10000.
-        The procedure will terminate earlier if p-value uncertainty falls 
-        below p_tol. 
-    
-    alt : {"two-sided", "greater", "less"}, optional
-        Alternative hypothesis relative to the null of zero monotonic association. 
-        Default: "two-sided".
-        
-        - "two-sided": Probability of observing |Λ| as large or larger than |Λ_obs| 
-                       ([-1, 1]) under the null (population Λ of zero).
-                       
-        - "greater": Probability of observing Λ ≥ Λ_obs (upper tail, [Λ_obs, 1])
-                     under the null (population Λ of zero).
-                     
-        - "less": Probability of observing Λ ≤ Λ_obs ([-1, Λ_obs]) under the null 
-                  (population Λ of zero).
-
-    Returns
-    -------
-    Lambda_s (Λ_s) : symmetric repeated-average-rank correlation in [-1, 1]
-    p_s      : p-value for Λ_s
-    Lambda_yx (Λ(Y|X)): directional slope of y given x in rank space
-    p_yx     : p-value of Λ_yx
-    Lambda_xy (Λ(X|Y)): directional slope of x given y in rank space
-    p_xy     : p-value of Λ_xy
-    Lambda_a : normalized asymmetry index = |Λ_yx - Λ_xy| / (|Λ_yx| + |Λ_xy|) in [0,1]
-
-    Properties
-    ----------
-    - Robust to outliers and heavy-tailed noise; highest sign breakdown with 
-      adversarial noise among rank methods.
-    - Less biased than Spearman/Kendall relative to Pearson.
-    - Similar or better accuracy than Spearman/Kendall for stronger associations.
-    - Asymptotic efficiency: ~81% vs. ~91% for Spearman and Kendall.
-    - Null distribution: centered, symmetric, slightly heavier tails than Spearman.
-    - Symmetric: Λ_s(x,y) == Λ_s(y,x).
-    - Invariant to strictly monotone transforms.
-
-    Variants
-    --------
-    A continuum exists between mean-of-means (outside loop - inside loop) and 
-    median-of-medians estimators:
-
-        Spearman (ρ) ≈ Λ(mean-mean) <--> Λ(mean-median) <--> Λ(median-mean)  
-                                                 <--> Λ(median-median) ≈ Siegel
-
-    The canonical choice Λ_s(mean-median) achieves the best efficiency/robustness
-    balance, especially at low statistics.
-
-    Fold-Back Transform
-    -------------------
-    The mean-of-medians construction can very rarely produce |Λ_yx| or |Λ_xy| slightly larger 
-    than 1. These cases arise for extremely rare, highly structured near-(anti)monotone rank 
-    configurations in which the set of pairwise rank slopes for one or more anchor points 
-    becomes strongly discrete and imbalanced (often exhibiting a localized oscillatory 
-    defect / weave-like structure). Such configurations are difficult to encounter by random 
-    permutations, but can be found more efficiently by stochastic swap/annealing searches that 
-    explicitly maximize |Λ|. Empirically, observed overshoots are small (|Λ_asym| ≲ 1.08 in 
-    search-constructed examples; values depend on n and on the search procedure).
-    
-    Within this overshoot regime, larger |Λ| corresponds to *weaker* monotone association
-    when compared to Kendall’s τ and Spearman’s ρ (i.e., among overshoot cases, |Λ_raw|
-    tends to anti-correlate with |τ| and |ρ|). To enforce the conventional correlation
-    range [-1,1] and restore the desired ordering in this regime, a reciprocal fold-back
-    mapping is applied to the asymmetric components (prior to geometric-mean symmetrization):
-    
-        f(Λ_asym) = sign(Λ_asym) · exp(−|log|Λ_asym||),  with f(0)=0,
-    
-    which is the identity on [−1,1], preserves sign, and maps |Λ_asym|>1 back into (0,1]
-    via reciprocal inversion.
-    
-    This transform is equivalent to:
-        Λ_asym ← Λ_asym                  if |Λ_asym| ≤ 1
-        Λ_asym ← 1 / Λ_asym              if |Λ_asym| > 1
-
-    In the Monte Carlo calibration runs used for the asymptotic null and the bivariate-Gaussian 
-    benchmarks, fold-back was never activated (zero occurrences in billions of draws). Therefore, 
-    it had no effect on the calibrated null distribution or benchmark results.
-    
-    Alternative stabilizations (e.g., Harrell–Davis quantile estimator per anchor, or
-    Monte Carlo/permutation-based bias correction) can only reduce overshoot frequency and
-    magnitude, but they materially change Λ and its null behavior; fold-back
-    is used as a simple, deterministic guardrail.
-
-    Implementation Notes
-    --------------------
-    - If asymmetric Λ_yx/Λ_xy have opposite signs Λ_s is taken as zero.
-    - Skip vertical pairs where rxt[j] == rxt[i].
-    - If all slopes for an i are undefined (e.g., all rxt equal), set b_i = NaN and
-      ignore in the outer mean.
-      
-    References
-    ----------
-    - [1] Spearman, C. The proof and measurement of association between two things. 
-          American Journal of Psychology, 15(1), 72–101, 1904.
-    - [2] Kendall, M.G., Rank Correlation Methods (4th Edition), Charles 
-          Griffin & Co., 1970.
-    - [3] https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
-    - [4] Siegel, A.F., Robust Regression Using Repeated Medians, Biometrika, 
-          Vol. 69, pp. 242-244, 1982.
-    
-    Example
-    --------
-    Compute the symmetric Lambda correlation Λ_s and its directional components
-    for a simple monotonic relationship:
-
-    import numpy as np
-    import math
-    from lambda_corr import lambda_corr
-
-    rng = np.random.default_rng(seed=0)
-
-    n = 50
-    rho = 0.5   # correlation strength
-    x = rng.standard_normal(n)
-    z = rng.standard_normal(n)
-    c = math.sqrt((1 - rho) * (1 + rho))
-    y = np.exp(rho * x + c * z)   # any monotonic transformation
-
-    # Compute Lambda correlations
-    Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a = lambda_corr(x, y)
-
-    # Nicely formatted output
-    print(f"Λ_s       = {Lambda_s: .4f}   (p = {p_s: .4g})")
-    print(f"Λ(y|x)    = {Lambda_yx: .4f}   (p = {p_yx: .4g})")
-    print(f"Λ(x|y)    = {Lambda_xy: .4f}   (p = {p_xy: .4g})")
-    print(f"Asymmetry = {Lambda_a: .4f}")
-    
-    # Example output:
-    # Λ_s       =  0.4130   (p =  0.0087)     #Result will be close to rho
-    # Λ(y|x)    =  0.4145   (p =  0.008419)
-    # Λ(x|y)    =  0.4114   (p =  0.008988)
-    # Asymmetry =  0.0038
-    
-@author: Jon Paul Lundquist
+@author: jplundquist
 """
 
 import numpy as np
+import numpy.random as nr
 from math import erf, sqrt, exp, pi
 from numba import njit, objmode #, prange
 import warnings
-from importlib.metadata import version, PackageNotFoundError
 
-try:
-    __version__ = version("lambda-corr")
-except PackageNotFoundError:
-    __version__ = "0.0.0"
+def median_even_rule_inplace(a):
+    """Median with your convention: average of middle two when even length."""
+    a = a[np.isfinite(a)]
+    m = a.size
+    if m == 0:
+        return np.nan
+    a.sort()
+    mid = m // 2
+    if m % 2 == 1:
+        return a[mid]
+    return 0.5 * (a[mid - 1] + a[mid])
+
+def mean_of_point_medians_identity_x(ry):
+    """
+    x ranks are [1..n] in this order; y ranks are ry (permutation of 1..n).
+    For each i: median_{j!=i} (ry[j]-ry[i])/(j-i). Then mean over i.
+    """
+    n = ry.size
+    total = 0.0
+    slopes = np.empty(n - 1, dtype=float)
+    for i in range(n):
+        yi = ry[i]
+        t = 0
+        for j in range(n):
+            if j == i:
+                continue
+            slopes[t] = (ry[j] - yi) / (j - i)
+            t += 1
+        total += median_even_rule_inplace(slopes)
+    return total / n
+
+def mean_of_point_medians_general(rx, ry):
+    """
+    General case: rx and ry are rank vectors (permutations).
+    We convert to x-sorted order so denominators are (j-i) in that order.
+    """
+    n = rx.size
+    # positions of each x-rank in the given order
+    pos = np.empty(n, dtype=int)
+    pos[rx - 1] = np.arange(n)
+    ry_xorder = ry[pos]  # y ranks in x-sorted order
+    return mean_of_point_medians_identity_x(ry_xorder)
+
+def sym_geom(Mxy, Myx):
+    if Mxy == 0.0 or Myx == 0.0:
+        return 0.0
+    mag = np.sqrt(abs(Mxy * Myx))
+    return np.sign(Myx) * mag
 
 #numba likes loops
 @njit(cache=True, nogil=True, inline='always')
@@ -409,7 +210,7 @@ def _lambda_stats(rx, ry, n):
     # mean of median slopes of standardized ranks in both directions
     Lambda_yx = _mean_medians_slope(rx, ry, n) # Λ(Y|X): (Δry/Δrx, y given x)
     Lambda_xy = _mean_medians_slope(ry, rx, n) # Λ(X|Y): (Δrx/Δry, x given y)
-
+  
     # NOTE (range guardrail):
     # Λ_yx and Λ_xy are robust slope-like functionals in rank space and are not
     # theoretically guaranteed to lie in [-1, 1] for all permutations. Extremely
@@ -430,10 +231,10 @@ def _lambda_stats(rx, ry, n):
     #     Lambda_xy = math.sign(Lambda_xy)*math.exp(-math.abs(math.log(math.abs(Lambda_xy))))
     
     #Simpler for code
-    if np.abs(Lambda_yx)>1:
-        Lambda_yx = 1/Lambda_yx
-    if np.abs(Lambda_xy)>1:
-        Lambda_xy = 1/Lambda_xy
+    # if np.abs(Lambda_yx)>1:
+    #     Lambda_yx = 1/Lambda_yx
+    # if np.abs(Lambda_xy)>1:
+    #     Lambda_xy = 1/Lambda_xy
             
     # Symmetrized robust correlation
     prod = Lambda_yx * Lambda_xy
@@ -446,7 +247,7 @@ def _lambda_stats(rx, ry, n):
         Lambda_s = 0.0
     else:
         Lambda_s = np.sign(Lambda_yx) * np.sqrt(prod)
-        Lambda_s = float( min(max(Lambda_s, -1.0), 1.0)) #Shouldn't ever be necessary. Floating-point error maybe.
+        #Lambda_s = float( min(max(Lambda_s, -1.0), 1.0)) #Shouldn't ever be necessary. Floating-point error maybe.
     
     #This is another option when the asymmetric measures signs disagree. 
     # if not np.isfinite(prod) or prod == 0.0:
@@ -658,3 +459,127 @@ def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt
     Lambda_a = 0.0 if denom == 0.0 else float(abs(Lambda_yx - Lambda_xy) / denom)
     
     return Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a
+
+def G_for_perm(ry):
+    rx = np.arange(1, ry.size + 1)
+    #Mxy = mean_of_point_medians_identity_x(ry)
+    # swap x<->y: treat ry as the x-ranks (in given order) and identity as y
+    #Myx = mean_of_point_medians_general(ry, rx)
+    #G = sym_geom(Mxy, Myx, sign_from=sign_from)
+    G, _, M_yx, _, M_xy, _, _ = lambda_corr(rx, ry, pvals=False)
+    return G, M_xy, M_yx
+
+def improve_by_random_swaps_anneal(ry0, steps, T0=1e-3, Tend=1e-6, keep_best=True):
+    """
+    Stochastic local search with annealing.
+    - ry0: permutation values 1..n
+    - steps: proposals
+    Returns: (best_ry, bestG, bestMxy, bestMyx)
+    """
+    ry = ry0.copy()
+    G, Mxy, Myx = G_for_perm(ry)
+    cur = abs(G)
+
+    best_ry = ry.copy()
+    bestG, bestMxy, bestMyx = G, Mxy, Myx
+    best = cur
+
+    n = ry.size
+    for t in range(steps):
+        # geometric cooling
+        frac = t / max(steps - 1, 1)
+        T = T0 * (Tend / T0) ** frac
+
+        i = int(nr.randint(0, n))
+        j = int(nr.randint(0, n-1))
+        if j >= i:
+            j += 1  # ensure j != i
+
+        ry[i], ry[j] = ry[j], ry[i]
+        G2, Mxy2, Myx2 = G_for_perm(ry)
+        new = abs(G2)
+
+        d = new - cur
+        if d >= 0 or (T > 0 and nr.random() < np.exp(d / T)):
+            # accept
+            cur = new
+            G, Mxy, Myx = G2, Mxy2, Myx2
+            if keep_best and cur > best:
+                best = cur
+                best_ry = ry.copy()
+                bestG, bestMxy, bestMyx = G, Mxy, Myx
+        else:
+            # reject: revert
+            ry[i], ry[j] = ry[j], ry[i]
+
+    return best_ry, bestG, bestMxy, bestMyx
+
+def refine_best(best_ry, tries=50, steps=20000):
+    #n = best_ry.size
+    bestAbs = -1.0
+    best = best_ry.copy()
+    bestStats = None
+
+    for _ in range(tries):
+        ry, G, Mxy, Myx = improve_by_random_swaps_anneal(
+            best, steps=steps, T0=1e-4, Tend=1e-7
+        )
+        if abs(G) > bestAbs:
+            bestAbs = abs(G)
+            best = ry
+            bestStats = (G, Mxy, Myx)
+
+    return bestAbs, best, bestStats
+
+def estimate_Cn(n, ry0=False, restarts=100, steps_per_restart=50000):
+    bestAbs = -1.0
+    best = None
+    bestStats = None
+    
+    if ry0 is not False:
+        for i in range(restarts):
+            print(i)
+            ry2, G, Mxy, Myx = improve_by_random_swaps_anneal(
+                ry0, steps=steps_per_restart, T0=5e-3, Tend=5e-6
+            )
+    
+            # Intensify: start from the best found in this restart, cool more aggressively
+            ry2, G2, Mxy2, Myx2 = improve_by_random_swaps_anneal(
+                ry2, steps=max(2000, steps_per_restart//5), T0=5e-5, Tend=1e-7
+            )
+    
+            if abs(G2) > bestAbs:
+                bestAbs = abs(G2)
+                best = ry2
+                bestStats = (G2, Mxy2, Myx2)
+                ry0 = ry2
+                print(bestStats)
+                print(best)
+    else:
+        
+        for i in range(restarts):
+            print(i)
+            ry0 = nr.permutation(n) + 1
+    
+            ry, G, Mxy, Myx = improve_by_random_swaps_anneal(
+                ry0, steps=steps_per_restart,  T0=5e-3, Tend=5e-6
+            )
+    
+            # Intensify: start from the best found in this restart, cool more aggressively
+            ry2, G2, Mxy2, Myx2 = improve_by_random_swaps_anneal(
+                ry, steps=max(2000, steps_per_restart//5), T0=5e-5, Tend=1e-7
+            )
+    
+            if abs(G2) > bestAbs:
+                bestAbs = abs(G2)
+                best = ry2
+                bestStats = (G2, Mxy2, Myx2)
+                print(bestStats)
+                print(best)
+    bestAbs, best, bestStats = refine_best(best)
+    return bestAbs, best, bestStats
+
+# Example:
+# C25, ry_best, (G, Mxy, Myx) = estimate_Cn(25, restarts=80, steps_per_restart=12000, seed=1)
+# print("C(25)~", C25, "G=", G, "Mxy=", Mxy, "Myx=", Myx)
+# print("ry:", ry_best.tolist())

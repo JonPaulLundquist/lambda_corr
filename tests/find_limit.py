@@ -215,43 +215,35 @@ def draw_bivariate_normal_numba(n, rho):
 @njit(cache=True, nogil=True, parallel=True)
 def compute_lambda0_numba_block(N, batch, rho, seed):
     """
-    Numba-parallel version: compute 'total' samples of L0.
-
-    Parameters
-    ----------
-    N      : int
-        Sample size for each lambda_corr evaluation.
-    batch  : int
-        Number of L0 samples to generate.
-    rho    : float
-        Correlation for the bivariate normal draws.
-    seed   : int
-        Global seed for Numba's RNG (reproducible in practice, though
-        per-thread order is implementation-dependent).
-
-    Returns
-    -------
-    out : 1D np.ndarray (float64)
-        Array of Lambda_s values (L0 samples).
-    out = np.empty(batch, dtype=np.float64)
+    Compute batch samples of (Lambda_s, Lambda_xy, Lambda_yx).
     """
-    out = np.empty(batch, dtype=np.float64)
-    # Seed (Numba global RNG)
+    out_s  = np.empty(batch, dtype=np.float64)
+    out_xy = np.empty(batch, dtype=np.float64)
+    out_yx = np.empty(batch, dtype=np.float64)
+
+    # Seed global RNG (Numba-compatible)
     np.random.seed(seed)
 
     for i in prange(batch):
         x, y = draw_bivariate_normal_numba(N, rho)
-        out[i] = lambda_corr(x, y, False)[0] # index 2 or 4 for asymmetrical lambda
 
-    return out
+        # lambda_corr returns a tuple
+        Lam_s, _, Lam_xy, _, Lam_yx, _, _ = lambda_corr(x, y, False)
+
+        out_s[i]  = Lam_s
+        out_xy[i] = Lam_xy
+        out_yx[i] = Lam_yx
+
+    return out_s, out_xy, out_yx
 
 def compute_lambda0_numba(N, total, rho=0.0, batch=100_000, seed=12345):
     """
-    Computes total L0 samples in chunks with tqdm progress bar.
+    Computes total L0 samples for Lambda_s, Lambda_xy, Lambda_yx.
     """
-    out = np.empty(total, dtype=np.float64)
+    out_s  = np.empty(total, dtype=np.float64)
+    out_xy = np.empty(total, dtype=np.float64)
+    out_yx = np.empty(total, dtype=np.float64)
 
-    # How many batches?
     n_batches = total // batch
     rem = total % batch
 
@@ -259,21 +251,32 @@ def compute_lambda0_numba(N, total, rho=0.0, batch=100_000, seed=12345):
     cur_seed = seed
 
     with tqdm(total=total, unit="samples", desc=f"Λ₀ (N={N})") as bar:
-        # Full batches
+
         for _ in range(n_batches):
-            block = compute_lambda0_numba_block(N, batch, rho, cur_seed)
-            out[pos:pos+batch] = block
+            bs, bxy, byx = compute_lambda0_numba_block(
+                N, batch, rho, cur_seed
+            )
+
+            out_s[pos:pos+batch]  = bs
+            out_xy[pos:pos+batch] = bxy
+            out_yx[pos:pos+batch] = byx
+
             pos += batch
-            cur_seed += 1  # optional: vary seed per batch
+            cur_seed += 1
             bar.update(batch)
 
-        # Remainder batch
         if rem > 0:
-            block = compute_lambda0_numba_block(N, rem, rho, cur_seed)
-            out[pos:pos+rem] = block
+            bs, bxy, byx = compute_lambda0_numba_block(
+                N, rem, rho, cur_seed
+            )
+
+            out_s[pos:pos+rem]  = bs
+            out_xy[pos:pos+rem] = bxy
+            out_yx[pos:pos+rem] = byx
+
             bar.update(rem)
 
-    return out
+    return out_s, out_xy, out_yx
 
 #Or for even less memory use run_simulation_streamed thought it appears to be slower:
 def run_simulation_streamed(N, total_samples, rho=0.0, batch_size=200_000, seed=12345):
@@ -393,7 +396,7 @@ def lambda_p_edgeworth(Lambda_S, n, alt="two-sided"):
 if __name__ == "__main__":
     # Precompute at rho=0
     N = 5
-    L0 = compute_lambda0_numba(N, 2_000_000_000, rho=0.0)
+    L0, L0_yx, L0_xy = compute_lambda0_numba(N, 2_000_000_000, rho=0.0)
     L0_mean, L0_var, L0_skew, L0_kurt = online_moments(L0) #uses far less memory for large arrays
     L0_sigma = math.sqrt(L0_var * N)   # ≈ constant ≈ sd*sqrt(n)
     

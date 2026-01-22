@@ -94,10 +94,10 @@ Pearson {'mean': 0.0008, 'sd': 0.2043, 'q95': 0.3382, 'q99': 0.4679}
 {'n': 25, 'rho': 0.9, 'alpha': 0.05, 'power_LambdaS': 0.9999, 'power_Spearman': 1.0, 'power_Kendall': 1.0}
  
 === Type I Error ===
-LambdaS: hat α=0.046  CI95=(0.045,0.048)  n=25  trials=50000
-Spearman: hat α=0.051  CI95=(0.049,0.053)  n=25  trials=50000
-Kendall: hat α=0.046  CI95=(0.045,0.048)  n=25  trials=50000
-Pearson: hat α=0.051  CI95=(0.049,0.052)  n=25  trials=50000
+LambdaS: hat α=0.048  CI95=(0.046,0.050)  n=25  trials=50000
+Spearman: hat α=0.052  CI95=(0.050,0.054)  n=25  trials=50000
+Kendall: hat α=0.047  CI95=(0.046,0.049)  n=25  trials=50000
+Pearson: hat α=0.052  CI95=(0.050,0.054)  n=25  trials=50000
 
 === Monotone invariance (corr of Λ_S before/after f(Y)) ===
 tanh 1.0
