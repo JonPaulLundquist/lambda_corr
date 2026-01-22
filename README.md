@@ -193,7 +193,7 @@ $$
 \Lambda_{yx} &=
 \mathrm{sign}\left(\bar{\Lambda}_{yx}\right)
 \min\left(
-\lvert \bar{\Lambda}_{yx} \rvert,\,
+\lvert \bar{\Lambda}_{yx} \rvert,
 \lvert \bar{\Lambda}_{yx} \rvert^{-1}
 \right)
 \end{aligned}
@@ -211,20 +211,20 @@ If the asymmetric signs disagree (rare under the null), $\mathbf{\Lambda_s}$ = 0
 
 ## Fold-Back Transform
 
-The mean-of-medians construction can very rarely produce |$\bar{\Lambda}_{yx}$| or |$\bar{\Lambda}_{xy}\right|$ slightly larger than 1. These cases arise for extremely rare, highly structured near-(anti)monotone rank configurations in which the set of pairwise rank slopes for one or more anchor points 
+The mean-of-medians construction can very rarely produce $\lvert \bar{\Lambda}_{yx}\rvert$ or $\lvert \bar{\Lambda}_{xy}\rvert$ slightly larger than 1. These cases arise for extremely rare, highly structured near-(anti)monotone rank configurations in which the set of pairwise rank slopes for one or more anchor points 
 becomes strongly discrete and imbalanced (often exhibiting a localized oscillatory defect / weave-like structure). Such configurations are difficult to encounter by random permutations, but can be found more efficiently by stochastic swap/annealing searches that 
-explicitly maximize |$\bar{\Lambda}$|. Empirically, observed overshoots are small (|$\bar{\Lambda}_{asym}$| ≲ 1.08 in search-constructed examples; values depend on n and on the search procedure).
+explicitly maximize |$\bar{\Lambda}$|. Empirically, observed overshoots are small ($\lvert \bar{\Lambda}_{asym}\rvert$ ≲ 1.08 in search-constructed examples; values depend on n and on the search procedure).
     
-Within this overshoot regime, larger |$\bar{\Lambda}$| corresponds to *weaker* monotone association when compared to Kendall’s τ and Spearman’s ρ (i.e., among overshoot cases, $\bar{\Lambda}$ tends to anti-correlate with τ and ρ). To enforce the conventional correlation
-range [-1,1] and restore the desired ordering in this regime, a reciprocal fold-back mapping is applied to the asymmetric components (prior to geometric-mean symmetrization): $f\left(\bar{\Lambda}_{\mathrm{asym}}\right)=\mathrm{sign}\left(\bar{\Lambda}_{\mathrm{asym}}\right)\cdot \exp\left(-\left|\log\left|\bar{\Lambda}_{\mathrm{asym}}\right|\right|\right)$, with f(0)=0, which is the identity on [−1,1], preserves sign, and maps $\left|\bar{\Lambda}_{asym}\right|$>1 back into (0,1] via reciprocal inversion.
-This transform is equivalent to: $\Lambda_{asym}$ ← $\bar{\Lambda}_{asym}$ if $\left|\bar{\Lambda}_{asym}\right|$ ≤ 1 and $\Lambda_{asym}$ ← 1 / $\bar{\Lambda}_{asym}$ if |$\bar{\Lambda}_{asym}$| > 1.
+Within this overshoot regime, larger $\lvert \bar{\Lambda}\rvert$ corresponds to *weaker* monotone association when compared to Kendall’s τ and Spearman’s ρ (i.e., among overshoot cases, $\bar{\Lambda}$ tends to anti-correlate with τ and ρ). To enforce the conventional correlation
+range [-1,1] and restore the desired ordering in this regime, a reciprocal fold-back mapping is applied to the asymmetric components (prior to geometric-mean symmetrization): $f(\bar{\Lambda}_{\mathrm{asym}})=\mathrm{sign}(\bar{\Lambda}_{\mathrm{asym}})\cdot \exp(-\lvert \log(\lvert \bar{\Lambda}_{\mathrm{asym}}\rvert)\rvert)$, with f(0)=0, which is the identity on [−1,1], preserves sign, and maps |$\bar{\Lambda}_{asym}$|>1 back into (0,1] via reciprocal inversion.
+This transform is equivalent to: $\Lambda_{asym}$ ← $\bar{\Lambda}_{asym}$ if $\lvert \bar{\Lambda}_{asym}\rvert$ ≤ 1 and $\Lambda_{asym}$ ← 1 / $\bar{\Lambda}_{asym}$ if $\lvert \bar{\Lambda}_{asym}\rvert$ > 1.
 
 In the Monte Carlo calibration runs used for the asymptotic null and the bivariate-Gaussian benchmarks, fold-back was never activated (zero occurrences in billions of draws). Therefore, it had no effect on the calibrated null distribution or benchmark results.
     
 Alternative stabilizations (e.g., Harrell–Davis quantile estimator per anchor, or Monte Carlo/permutation-based bias correction) can only reduce overshoot frequency and magnitude, but they materially change Λ and its null behavior; fold-back is used as a simple, deterministic guardrail.
 
 **Examples of Overshoot Behavior**  
-Shown are rank configurations that produce the largest observed *untransformed* value of the symmetric statistics for different sample sizes (found via stochastic annealing rank swap search). Listed in the legend are the |Λ_raw| before transform and Λ after applying the reciprocal fold-back transform to the asymmetric components; the results are reasonable for this robust correlation measure.
+Shown are rank configurations that produce the largest observed *untransformed* value of the symmetric statistics for different sample sizes (found via stochastic annealing rank swap search). Listed in the legend are the $\lvert \bar{\Lambda}_{asym}\rvert$ before transform and Λ after applying the reciprocal fold-back transform to the asymmetric components; the results are reasonable for this robust correlation measure.
 
 <table>
 <tr>

@@ -193,7 +193,7 @@ $$
 \Lambda_{yx} &=
 \mathrm{sign}\left(\bar{\Lambda}_{yx}\right)
 \min\left(
-\lvert \bar{\Lambda}_{yx} \rvert,\,
+\lvert \bar{\Lambda}_{yx} \rvert,
 \lvert \bar{\Lambda}_{yx} \rvert^{-1}
 \right)
 \end{aligned}
