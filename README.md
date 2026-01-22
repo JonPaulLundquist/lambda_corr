@@ -224,7 +224,7 @@ In the Monte Carlo calibration runs used for the asymptotic null and the bivaria
 Alternative stabilizations (e.g., Harrell–Davis quantile estimator per anchor, or Monte Carlo/permutation-based bias correction) can only reduce overshoot frequency and magnitude, but they materially change Λ and its null behavior; fold-back is used as a simple, deterministic guardrail.
 
 **Examples of Overshoot Behavior**  
-Shown are rank configurations that produce the largest observed *untransformed* value of the symmetric statistics for different sample sizes (found via stochastic annealing rank swap search). Listed in the legend are the $\lvert \bar{\Lambda}_{asym}\rvert$ before transform and Λ after applying the reciprocal fold-back transform to the asymmetric components; the results are reasonable for this robust correlation measure.
+Shown are rank configurations that produce the largest observed *untransformed* value of the symmetric statistics for different sample sizes (found via stochastic annealing rank swap search). Listed in the legend are the $\bar{\Lambda}$ before transform and Λ after applying the reciprocal fold-back transform to the asymmetric components; the results are reasonable for this robust correlation measure.
 
 <table>
 <tr>
@@ -232,7 +232,7 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 
 <b>(a) Possible maximal overshoot examples found via annealing search. Shown are the values of Λ_s before and after fold-back.</b><br>
 <p align="center">
-  <img src="tests/overshoot/possible_max_overshoots.png" width="350">
+  <img src="tests/overshoot/possible_max_overshoots.png" width="400">
 </p>
 
 </td>
