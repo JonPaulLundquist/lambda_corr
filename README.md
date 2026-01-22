@@ -232,7 +232,7 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 
 <b>(a) Possible maximal overshoot examples found via annealing search. Shown are the values of Λ_s before and after fold-back.</b><br>
 <p align="center">
-  <img src="tests/overshoot/possible_max_overshoots.png" width="400">
+  <img src="tests/overshoot/possible_max_overshoots.png" width="450">
 </p>
 
 </td>
