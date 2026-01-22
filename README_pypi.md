@@ -249,7 +249,7 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 
 ---
 
-## Properties
+## Properties of $\Lambda_s$
 
 - **Range:** **Λ_s** ∈ [-1,1].
 - **Symmetric:** **Λ_s**(x,y) == **Λ_s**(y,x).

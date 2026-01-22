@@ -155,7 +155,7 @@ Somers' D better agree on asymmetry when standardization is done, e.g., on binar
 $$
 \begin{aligned}
 b_i &=
-\underset{\substack{j \neq i \\ r_x^{\ast}(j) \neq r_x^{\ast}(i)}}{\mathrm{median}}
+\underset{j \ne i \land r_x^{\ast}(j) \ne r_x^{\ast}(i)}{\mathrm{median}}
 \left(
 \frac{ r_y^{\ast}(j) - r_y^{\ast}(i) }
      { r_x^{\ast}(j) - r_x^{\ast}(i) }
@@ -242,7 +242,7 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 
 ---
 
-## Properties
+## Properties of $\Lambda_s$
 
 - **Range:** $\mathbf{\Lambda_s}$ ∈ \([-1,1]\).
 - **Symmetric:** $\mathbf{\Lambda_s}(x,y)$ == $\mathbf{\Lambda_s}(y,x)$.
