@@ -230,7 +230,7 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 <tr>
 <td align="center">
 
-<b>(a) Possible maximal overshoot examples found via annealing search. Shown are the values of $\mathbf{\Lambda_s}$ before and after fold-back.</b><br>
+<b>(a) Possible maximal overshoot examples found via annealing search. Shown are the values of Λ_s before and after fold-back.</b><br>
 <p align="center">
   <img src="tests/overshoot/possible_max_overshoots.png" width="350">
 </p>
@@ -238,7 +238,7 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 </td>
 <td align="center">
 
-<b>(b) Λ statistic before and after fold-back transform compared to Kendall's τ (found by random indice swapping from perfect association). The proper ordering of association strength is recovered.</b><br>
+<b>(b) Λ_s statistic before and after fold-back transform compared to Kendall's τ (found by random indice swapping from perfect association). The proper ordering of association strength is recovered.</b><br>
 <p align="center">
   <img src="tests/overshoot/LambdaVsTau_overshoot.png" width="350">
 </p>
