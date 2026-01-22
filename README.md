@@ -177,7 +177,7 @@ $$
 $$
 \begin{aligned}
 \Lambda_{yx} &=
-\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)\,
+\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)
 \exp\left(
 -\left|
 \log\left|\bar{\Lambda}_{yx}\right|
@@ -189,12 +189,14 @@ $$
 That is equivalent to:
 
 $$
+\begin{aligned}
 \Lambda_{yx} &=
-\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)\,
+\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)
 \min\left(
 \lvert \bar{\Lambda}_{yx} \rvert,\,
 \lvert \bar{\Lambda}_{yx} \rvert^{-1}
 \right)
+\end{aligned}
 $$
 
 6. Define the **symmetric** $\mathbf{\Lambda_s}$ using the classical signed geometric mean method:
@@ -209,13 +211,13 @@ If the asymmetric signs disagree (rare under the null), $\mathbf{\Lambda_s}$ = 0
 
 ## Fold-Back Transform
 
-The mean-of-medians construction can very rarely produce $\left|\bar{\Lambda}_{yx}\right|$ or $\left|\bar{\Lambda}_{xy}\right|$ slightly larger than 1. These cases arise for extremely rare, highly structured near-(anti)monotone rank configurations in which the set of pairwise rank slopes for one or more anchor points 
+The mean-of-medians construction can very rarely produce |$\bar{\Lambda}_{yx}$| or |$\bar{\Lambda}_{xy}\right|$ slightly larger than 1. These cases arise for extremely rare, highly structured near-(anti)monotone rank configurations in which the set of pairwise rank slopes for one or more anchor points 
 becomes strongly discrete and imbalanced (often exhibiting a localized oscillatory defect / weave-like structure). Such configurations are difficult to encounter by random permutations, but can be found more efficiently by stochastic swap/annealing searches that 
-explicitly maximize $\left|\bar{\Lambda}\right|$. Empirically, observed overshoots are small ($\left|\bar{\Lambda}_{asym}\right|$ ≲ 1.08 in search-constructed examples; values depend on n and on the search procedure).
+explicitly maximize |$\bar{\Lambda}$|. Empirically, observed overshoots are small (|$\bar{\Lambda}_{asym}$| ≲ 1.08 in search-constructed examples; values depend on n and on the search procedure).
     
-Within this overshoot regime, larger $\left|\bar{\Lambda}\right|$ corresponds to *weaker* monotone association when compared to Kendall’s τ and Spearman’s ρ (i.e., among overshoot cases, $\bar{\Lambda}$ tends to anti-correlate with τ and ρ). To enforce the conventional correlation
+Within this overshoot regime, larger |$\bar{\Lambda}$| corresponds to *weaker* monotone association when compared to Kendall’s τ and Spearman’s ρ (i.e., among overshoot cases, $\bar{\Lambda}$ tends to anti-correlate with τ and ρ). To enforce the conventional correlation
 range [-1,1] and restore the desired ordering in this regime, a reciprocal fold-back mapping is applied to the asymmetric components (prior to geometric-mean symmetrization): $f\left(\bar{\Lambda}_{\mathrm{asym}}\right)=\mathrm{sign}\left(\bar{\Lambda}_{\mathrm{asym}}\right)\cdot \exp\left(-\left|\log\left|\bar{\Lambda}_{\mathrm{asym}}\right|\right|\right)$, with f(0)=0, which is the identity on [−1,1], preserves sign, and maps $\left|\bar{\Lambda}_{asym}\right|$>1 back into (0,1] via reciprocal inversion.
-This transform is equivalent to: $\Lambda_{asym}$ ← $\bar{\Lambda}_{asym}$ if $\left|\bar{\Lambda}_{asym}\right|$ ≤ 1 and $\Lambda_{asym}$ ← 1 / $\bar{\Lambda}_{asym}$ if $\left|\bar{\Lambda}_{asym}\right|$ > 1.
+This transform is equivalent to: $\Lambda_{asym}$ ← $\bar{\Lambda}_{asym}$ if $\left|\bar{\Lambda}_{asym}\right|$ ≤ 1 and $\Lambda_{asym}$ ← 1 / $\bar{\Lambda}_{asym}$ if |$\bar{\Lambda}_{asym}$| > 1.
 
 In the Monte Carlo calibration runs used for the asymptotic null and the bivariate-Gaussian benchmarks, fold-back was never activated (zero occurrences in billions of draws). Therefore, it had no effect on the calibrated null distribution or benchmark results.
     
@@ -228,7 +230,7 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 <tr>
 <td align="center">
 
-<b>(a) Possible maximal overshoot examples found via annealing search. Shown are the values of $\mathbf{\Lambda_s}$ before and after fold-back.</b><br>
+<b>(a) Possible maximal overshoot examples found via annealing search. Shown are the values of $\Lambda_s$ before and after fold-back.</b><br>
 <p align="center">
   <img src="tests/overshoot/possible_max_overshoots.png" width="350">
 </p>
@@ -236,7 +238,7 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 </td>
 <td align="center">
 
-<b>(b) Λ statistic before and after fold-back transform compared to Kendall's τ (found by random indice swapping from perfect association). The proper ordering of association strength is recovered.</b><br>
+<b>(b) $\Lambda_s$ statistic before and after fold-back transform compared to Kendall's τ (found by random indice swapping from perfect association). The proper ordering of association strength is recovered.</b><br>
 <p align="center">
   <img src="tests/overshoot/LambdaVsTau_overshoot.png" width="350">
 </p>

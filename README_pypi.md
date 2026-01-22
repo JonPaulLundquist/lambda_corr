@@ -177,7 +177,7 @@ $$
 $$
 \begin{aligned}
 \Lambda_{yx} &=
-\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)\,
+\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)
 \exp\left(
 -\left|
 \log\left|\bar{\Lambda}_{yx}\right|
@@ -189,12 +189,14 @@ $$
 That is equivalent to:
 
 $$
+\begin{aligned}
 \Lambda_{yx} &=
-\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)\,
+\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)
 \min\left(
 \lvert \bar{\Lambda}_{yx} \rvert,\,
 \lvert \bar{\Lambda}_{yx} \rvert^{-1}
 \right)
+\end{aligned}
 $$
 
 6. Define the **symmetric** **Λ_s** using the classical signed geometric mean method:
