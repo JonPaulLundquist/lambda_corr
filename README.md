@@ -148,7 +148,7 @@ r_y^{\ast} = \frac{r_y - \overline{r_y}}{\sigma_{r_y}} .
 $$
 
 Standardization doesn't affect $\mathbf{\Lambda_s}$ due to symmetrization but improves the stability of the asymmetric $\mathbf{\Lambda_{yx}/\Lambda_{xy}}$, especially when there are ties. Tests using 
-Somers' D better agree on asymmetry when standardization is done, e.g., on binary data. Also, decreases the number of $\mathbf{\Lambda_{yx}/\Lambda_{xy}}$ sign disagreements for various scenarios (see [/tests/test_opposites.py](/tests/test_opposites.py))
+Somers' D better agree on asymmetry when standardization is done, e.g., on binary data. Also, decreases the number of $\mathbf{\Lambda_{yx}/\Lambda_{xy}}$ sign disagreements for various scenarios (see [/tests/test_opposites.py](/tests/test_opposites.py)).
     
 3. For each anchor point sample *i*, compute the **median slope in rank space**:
 

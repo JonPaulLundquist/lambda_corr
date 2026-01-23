@@ -130,11 +130,10 @@ Given paired samples (x_i, y_i), i = 1...n: symmetrize (via signed geometric mea
 
 Replace the raw (x, y) values by their ranks, i.e. by the *positions* they occupy when the data are sorted, so that only relative ordering information is retained:
 
-
 $$
-r_x = \mathrm{rank}_{\mathrm{avg}}(x),
+r_x = \mathrm{rank}\_{\mathrm{avg}}(x),
 \qquad
-r_y = \mathrm{rank}_{\mathrm{avg}}(y),
+r_y = \mathrm{rank}\_{\mathrm{avg}}(y),
 $$
 
 where ties are assigned their average (mid) rank.
@@ -148,20 +147,21 @@ r_y^{\ast} = \frac{r_y - \overline{r_y}}{\sigma_{r_y}} .
 $$
  
 Standardization doesn't affect **Λ_s** due to symmetrization but improves the stability of the asymmetric **Λ_yx/xy**, especially when there are ties. Tests using 
-Somers' D better agree on asymmetry when standardization is done, e.g., on binary data. Also, decreases the number of **Λ_yx/xy** sign disagreements for various scenarios (see [github /tests/test_opposites.py](https://github.com/JonPaulLundquist/lambda_corr/blob/main/tests/test_opposites.py))
+Somers' D better agree on asymmetry when standardization is done, e.g., on binary data. Also, decreases the number of **Λ_yx/xy** sign disagreements for various scenarios (see [github /tests/test_opposites.py](https://github.com/JonPaulLundquist/lambda_corr/blob/main/tests/test_opposites.py)).
     
 3. For each anchor point sample *i*, compute the **median slope in rank space**:
 
 $$
 \begin{aligned}
 b_i &=
-\underset{\substack{j \neq i \\ r_x^{\ast}(j) \neq r_x^{\ast}(i)}}{\mathrm{median}}
+\underset{j \ne i, r_x^{\ast}(j) \ne r_x^{\ast}(i)}{\mathrm{median}}
 \left(
 \frac{ r_y^{\ast}(j) - r_y^{\ast}(i) }
      { r_x^{\ast}(j) - r_x^{\ast}(i) }
 \right)
 \end{aligned}
 $$
+
 
 4. Compute the **asymmetric** rank-slope correlations as the outer mean over i slopes:
 - **Λ(y|x)**:
@@ -176,11 +176,11 @@ $$
    
 $$
 \begin{aligned}
-\Lambda_{yx} &=
-\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)
+\Lambda\_{yx} &=
+\mathrm{sign}\left(\bar{\Lambda}\_{yx}\right)
 \exp\left(
 -\left|
-\log\left|\bar{\Lambda}_{yx}\right|
+\log\left|\bar{\Lambda}\_{yx}\right|
 \right|
 \right)
 \end{aligned}
@@ -190,11 +190,11 @@ That is equivalent to:
 
 $$
 \begin{aligned}
-\Lambda_{yx} &=
-\mathrm{sign}\left(\bar{\Lambda}_{yx}\right)
+\Lambda\_{yx} &=
+\mathrm{sign}\left(\bar{\Lambda}\_{yx}\right)
 \min\left(
-\lvert \bar{\Lambda}_{yx} \rvert,
-\lvert \bar{\Lambda}_{yx} \rvert^{-1}
+\lvert \bar{\Lambda}\_{yx} \rvert,
+\lvert \bar{\Lambda}\_{yx} \rvert^{-1}
 \right)
 \end{aligned}
 $$
@@ -226,30 +226,27 @@ Alternative stabilizations (e.g., Harrell–Davis quantile estimator per anchor,
 **Examples of Overshoot Behavior**  
 Shown are rank configurations that produce the largest observed *untransformed* value of the symmetric statistics for different sample sizes (found via stochastic annealing rank swap search). Listed in the legend are the |Λ_raw| before transform and Λ after applying the reciprocal fold-back transform to the asymmetric components; the results are reasonable for this robust correlation measure.
 
-<table>
-<tr>
-<td align="center">
-
-<b>(a) Possible maximal overshoot examples found via annealing search. Shown are the values of Λ_s before and after fold-back.</b><br>
-<p align="center">
-  <img src="tests/overshoot/possible_max_overshoots.png" width="350">
-</p>
-
-</td>
-<td align="center">
-
-<b>(b) Λ_s statistic before and after fold-back transform compared to Kendall's τ (found by random indice swapping from perfect association). The proper ordering of association strength is recovered.</b><br>
-<p align="center">
-  <img src="tests/overshoot/LambdaVsTau_overshoot.png" width="350">
-</p>
-
-</td>
-</tr>
+<table width="100%">
+  <colgroup>
+    <col width="50%">
+    <col width="50%">
+  </colgroup>
+  <tr>
+    <td align="center">
+      <b>(a) Possible maximal overshoot examples found via annealing search. Shown are the values of Λ_s before and after fold-back.</b><br>
+      <img src="https://raw.githubusercontent.com/JonPaulLundquist/lambda_corr/main/tests/overshoot/possible_max_overshoots.png" width="350" height="263">
+    </td>
+    <td align="center">
+      <b>(b) Λ_s statistic before and after fold-back transform compared to Kendall's τ (found by random indice swapping from perfect association). The proper ordering of association strength is recovered.</b><br>
+      <img src="https://raw.githubusercontent.com/JonPaulLundquist/lambda_corr/main/tests/overshoot/LambdaVsTau_overshoot.png" width="350" height="263">
+    </td>
+  </tr>
 </table>
+
 
 ---
 
-## Properties of $\Lambda_s$
+## Properties of Λ_s
 
 - **Range:** **Λ_s** ∈ [-1,1].
 - **Symmetric:** **Λ_s**(x,y) == **Λ_s**(y,x).
