@@ -377,6 +377,9 @@ y = np.exp(rho * x + c * z)   # any monotonic transformation
 
 # Compute Lambda correlations
 Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a = lambda_corr(x, y)
+#or 
+#Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a = lambda_corr_nb(x, y, y.size) 
+#for inside Numba @njit functions
 
 # Nicely formatted output
 print(f"Λ_s       = {Lambda_s: .4f}   (p = {p_s: .4g})")

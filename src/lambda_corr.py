@@ -8,7 +8,7 @@ Created on Wed Oct  8 19:56:06 2025
     Repeated-Average Rank Correlation Λ (Lambda) 
     
     Introduction
-    ----------
+    ------------
     The Repeated-Average Rank correlation Λ (Lambda) introduced here is a new family 
     of robust, symmetric, and asymmetric measures of monotone association based on 
     pairwise slopes in rank space. Compared with traditional rank-based measures 
@@ -63,11 +63,19 @@ Created on Wed Oct  8 19:56:06 2025
     Λ_s extends this same geometric-mean symmetrization to robust repeated average 
     rank-slope correlations.
 
+    Functions
+    ---------    
+    - lambda_corr(x, y, ...): main user-facing wrapper with validation, finite filtering, 
+      and warnings.
+    - lambda_corr_nb(x, y, n, ...): Numba-compatible core for use inside @njit code.
+      Assumes x and y are already prevalidated (same length n≥3, finite, non-constant).
+  
     Parameters
     ----------
     x, y : 1-D array_like 
         Two input samples of equal length (n ≥ 3).
-    
+    n : integer (only for lambda_corr_nb)
+        Size of x and y.
     pvals : {True, False}, optional
         Whether to compute p-values. Default: True.
         If False, all returned p-values are NaN and no permutation/asymptotic
@@ -88,8 +96,8 @@ Created on Wed Oct  8 19:56:06 2025
         - "perm": Use Monte Carlo permutation test. Valid for any tie structure. 
                   Note: This is approximate unless all permutations are
                   enumerated, which is only feasible for very small n.
-                  The RNG is re-seeded from OS entropy for every call so
-                  permutation p-values vary across runs by default.
+                  The RNG is re-seeded for every call so permutation p-values vary across 
+                  runs by default.
                   
         Note:
             The permutation test samples from the *conditional* null distribution, generated 
@@ -145,7 +153,7 @@ Created on Wed Oct  8 19:56:06 2025
       adversarial noise among rank methods.
     - Less biased than Spearman/Kendall relative to Pearson.
     - Similar or better accuracy than Spearman/Kendall for stronger associations.
-    - Asymptotic efficiency: ~81% vs. ~91% for Spearman and Kendall.
+    - Asymptotic efficiency for bivariate normal: ~81% vs. ~91% for Spearman and Kendall.
     - Null distribution: centered, symmetric, slightly heavier tails than Spearman.
     - Symmetric: Λ_s(x,y) == Λ_s(y,x).
     - Invariant to strictly monotone transforms.
@@ -550,6 +558,41 @@ def _lambda_p_asymptotic(Lambda_s, n, alt="two-sided"):
         else:  # "less"
             return P_z
 
+#Numbda compatible entry
+@njit(cache=True, nogil=True, fastmath=True)
+def lambda_corr_nb(x, y, n, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt="two-sided"):
+
+    # assume: x,y already arrays of same length, n>=3, finite, and non-constant
+    # Standardized ranks with averaged ties
+    rx = _std_ranks(x, n)
+    ry = _std_ranks(y, n)
+    # Get Lambda correlations - symmetric and asymmetric
+    Lambda_s, Lambda_yx, Lambda_xy  = _lambda_stats(rx, ry, n)
+    
+    if pvals:
+        if (ptype=="perm") or ((ptype=="default") and (n < 25)):
+                p_s, p_yx, p_xy = _lambda_pvals(rx, ry, n, Lambda_s, Lambda_yx, Lambda_xy, 
+                                                p_tol=p_tol, n_perm=n_perm, alt=alt)
+        elif (ptype=="asymp") or ((ptype=="default") and (n >= 25)):
+            p_s = _lambda_p_asymptotic(Lambda_s, n, alt=alt) 
+            #The null distribution for the asymmetric measures was not calculated seperately
+            #but these two Gaussian-ish random variables are not independent; 
+            #they are very strongly correlated and nearly identically distributed under the null.
+            #Therefore, the geometric average should have approximately the same distribution.
+            #MC testing confirms this.
+            p_yx = _lambda_p_asymptotic(Lambda_yx, n, alt=alt)
+            p_xy = _lambda_p_asymptotic(Lambda_xy, n, alt=alt)
+        else:
+            p_s = p_xy = p_yx = np.nan
+    else:
+        p_s = p_xy = p_yx = np.nan
+    
+    # Asymmetry index with safe denominator
+    denom = abs(Lambda_yx) + abs(Lambda_xy)
+    Lambda_a = 0.0 if denom == 0.0 else float(abs(Lambda_yx - Lambda_xy) / denom)
+    
+    return Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a
+
 #@njit(cache=True, nogil=True) #njit not compatible with warnings
 def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt="two-sided"):
     
@@ -629,32 +672,8 @@ def lambda_corr(x, y, pvals=True, ptype="default", p_tol=1e-4, n_perm=10000, alt
                 UserWarning
             )
 
-    # Standardized ranks with averaged ties
-    rx = _std_ranks(x, n)
-    ry = _std_ranks(y, n)
-    # Get Lambda correlations - symmetric and asymmetric
-    Lambda_s, Lambda_yx, Lambda_xy  = _lambda_stats(rx, ry, n)
-    
-    if pvals:
-        if (ptype=="default" and (n < 25)) or ptype=="perm":
-                p_s, p_yx, p_xy = _lambda_pvals(rx, ry, n, Lambda_s, Lambda_yx, Lambda_xy, 
-                                                p_tol=p_tol, n_perm=n_perm, alt=alt)
-        elif (ptype=="default" and n >= 25) or ptype=="asymp":
-            p_s = _lambda_p_asymptotic(Lambda_s, n, alt=alt) 
-            #The null distribution for the asymmetric measures was not calculated seperately
-            #but these two Gaussian-ish random variables are not independent; 
-            #they are very strongly correlated and nearly identically distributed under the null.
-            #Therefore, the geometric average should have approximately the same distribution.
-            #MC testing confirms this.
-            p_yx = _lambda_p_asymptotic(Lambda_yx, n, alt=alt)
-            p_xy = _lambda_p_asymptotic(Lambda_xy, n, alt=alt)
-        else:
-            p_s = p_xy = p_yx = np.nan
-    else:
-        p_s = p_xy = p_yx = np.nan
-    
-    # Asymmetry index with safe denominator
-    denom = abs(Lambda_yx) + abs(Lambda_xy)
-    Lambda_a = 0.0 if denom == 0.0 else float(abs(Lambda_yx - Lambda_xy) / denom)
+    Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a = \
+        lambda_corr_nb(x, y, n, pvals=pvals, ptype=ptype, p_tol=p_tol, n_perm=n_perm, 
+                       alt=alt)
     
     return Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a
