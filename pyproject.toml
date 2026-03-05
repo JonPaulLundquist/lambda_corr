@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lambda-corr"
-version = "0.6.0"
+version = "0.8.0"
 description = "Repeated-Average Rank Correlations Λ (Lambda): a family of robust, symmetric/asymmetric measures of monotone association based on pairwise rank slopes."
 readme = { file = "README_pypi.md", content-type = "text/markdown" }
 requires-python = ">=3.8"
@@ -18,15 +18,13 @@ classifiers = ["Programming Language :: Python :: 3",
 ]
 dependencies = ["numba>=0.61", "numpy>=1.23"]
 
-[project.optional-dependencies]
-tests = ["scipy>=1.9"]
-
 [project.urls]
 Homepage = "https://github.com/JonPaulLundquist/lambda_corr"
 Issues = "https://github.com/JonPaulLundquist/lambda_corr/issues"
 
-[tool.setuptools]
-py-modules = ["lambda_corr"]
+[tool.setuptools.packages.find]
+include = ["lambda_corr"]
+exclude = ["*tests*", "*results*", "*example*", "*HPC*"]
 
-[tool.setuptools.package-dir]
-"" = "src"
+[tool.setuptools.package-data]
+lambda_corr = ["data/*.npz"]

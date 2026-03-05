@@ -1,6 +1,6 @@
 # lambda_corr — Repeated-Average Rank Correlation Λ (Lambda)
 
-`lambda_corr` introduces and implements the **Repeated-Average Rank Correlation Λ (Lambda)**, a new family of robust, symmetric, and asymmetric measures of monotone association 
+`lambda_corr` introduces and implements the **Repeated-Average Rank Correlation Λ (Lambda)**, a new family of **robust, symmetric, and asymmetric measures** of monotone association 
 based on **pairwise rank slopes**. Compared with traditional rank-based measures (Spearman’s ρ and Kendall’s τ [1,2]), Lambda is:
 
 - **Substantially more resistant to noise and outliers** (see [/results/\*Robustness\*.png](results/)).
@@ -109,7 +109,7 @@ Comparison vs Pearson's r, Spearman’s ρ and Kendall’s τ.
   )</strong>
 </p>
 
-The canonical statistic, **$\mathbf{\Lambda_s}$**, combines a robust median-of-pairwise-slopes inner loop with an efficient outer mean (repeated-average, inspired by Seigel's repeated-median [4]), 
+The canonical statistic, **$\mathbf{\Lambda_s}$**, combines a robust **median-of-pairwise-slopes inner loop** with an efficient **outer mean** (repeated-average, inspired by Seigel's repeated-median [4]), 
 and uses a **signed geometric-mean symmetrization**, mirroring how:
 
 - **Kendall’s $\mathbf{\tau_b}$** can be written as the signed geometric mean of **Somers’ D(y|x)** and **D(y|x)**;
@@ -139,7 +139,7 @@ $$
 
 where ties are assigned their average (mid) rank.
 
-2. **Standardize** ranks to zero mean / unit variance:
+2. **Standardize ranks** to zero mean / unit variance:
 
 $$
 r_x^{\ast} = \frac{r_x - \overline{r_x}}{\sigma_{r_x}},
@@ -150,7 +150,7 @@ $$
 Standardization doesn't affect $\mathbf{\Lambda_s}$ due to symmetrization but improves the stability of the asymmetric $\mathbf{\Lambda_{yx}/\Lambda_{xy}}$, especially when there are ties. Tests using 
 Somers' D better agree on asymmetry when standardization is done, e.g., on binary data. Also, decreases the number of $\mathbf{\Lambda_{yx}/\Lambda_{xy}}$ sign disagreements for various scenarios (see [/tests/test_opposites.py](/tests/test_opposites.py)).
     
-3. For each anchor point sample *i*, compute the **median slope in rank space**:
+3. Compute **median slope in rank space** at each sample *i*:
 
 $$
 \begin{aligned}
@@ -172,8 +172,8 @@ $$
 
 - **Λ(x|y)**: repeat with x and y swapped.
 
-5. A fold-back transform is applied to the asymmetric components to enforce the conventional range [-1, 1], and to restore the correct ordering relative to τ/ρ, for extremely rare, highly structured near-(anti)monotone rank configurations (see Fold-Back Transform section below):
-   
+5. **Apply a fold-back transform** to the asymmetric components enforcing the range [-1, 1], and restoring the correct ordering relative to τ/ρ, for extremely rare, highly structured near-(anti)monotone rank configurations (see Fold-Back Transform section below):
+ 
 $$
 \begin{aligned}
 \Lambda_{yx} &=
@@ -199,19 +199,19 @@ $$
 \end{aligned}
 $$
 
-6. Define the **symmetric** $\mathbf{\Lambda_s}$ using the classical signed geometric mean method:
+6. Define the **symmetric** $\mathbf{\Lambda_s}$ using the classical **signed geometric mean**:
 
 $$
 \Lambda_s = \mathrm{sgn}(\Lambda_{yx}) \sqrt{\left|\Lambda_{yx}\Lambda_{xy}\right|}
 $$
 
-If the asymmetric signs disagree (rare under the null), $\mathbf{\Lambda_s}$ = 0. Kendall's τ is on average approximately zero in these cases (see [/tests/test_opposites.py](/tests/test_opposites.py)).
+If the asymmetric signs disagree, $\mathbf{\Lambda_s}$ = 0. Kendall's τ is on average approximately zero in these cases (see [/tests/test_opposites.py](/tests/test_opposites.py)).
 
 ---
 
 ## Fold-Back Transform
 
-The mean-of-medians construction can very rarely produce $\lvert \bar\Lambda_{yx}\rvert$ or $\lvert \bar\Lambda_{xy}\rvert$ slightly larger than 1. These cases arise for extremely rare, highly structured near-(anti)monotone rank configurations in which the set of pairwise rank slopes for one or more anchor points 
+The mean-of-medians construction can very rarely produce $\lvert \bar\Lambda_{yx}\rvert$ or $\lvert \bar\Lambda_{xy}\rvert$ slightly larger than 1. These cases are extremely rare, highly structured near-(anti)monotone rank configurations where the set of pairwise rank slopes for one or more anchor points 
 becomes strongly discrete and imbalanced (often exhibiting a localized oscillatory defect / weave-like structure). Such configurations are difficult to encounter by random permutations, but can be found more efficiently by stochastic swap/annealing searches that 
 explicitly maximize $\lvert \bar\Lambda\rvert$. Empirically, observed overshoots are small ($\lvert \bar\Lambda_{\mathrm{asym}}\rvert \lesssim 1.08$ in search-constructed examples; values depend on $n$ and on the search procedure).
 
@@ -219,7 +219,7 @@ Within this overshoot regime, larger $\lvert \bar\Lambda\rvert$ corresponds to *
 range $[-1,1]$ and restore the desired ordering in this regime, a reciprocal fold-back mapping is applied to the asymmetric components (prior to geometric-mean symmetrization): $f(\bar\Lambda_{\mathrm{asym}})=\mathrm{sign}(\bar\Lambda_{\mathrm{asym}})\cdot \exp(-\lvert \log(\lvert \bar\Lambda_{\mathrm{asym}}\rvert)\rvert)$, with $f(0)=0$, which is the identity on $[-1,1]$, preserves sign, and maps $\lvert \bar\Lambda_{\mathrm{asym}}\rvert>1$ back into $(0,1]$ via reciprocal inversion.
 This transform is equivalent to: $\Lambda_{\mathrm{asym}} \leftarrow \bar\Lambda_{\mathrm{asym}}$ if $\lvert \bar\Lambda_{\mathrm{asym}}\rvert \le 1$ and $\Lambda_{\mathrm{asym}} \leftarrow 1/\bar\Lambda_{\mathrm{asym}}$ if $\lvert \bar\Lambda_{\mathrm{asym}}\rvert > 1$.
 
-In the Monte Carlo calibration runs used for the asymptotic null and the bivariate-Gaussian benchmarks, fold-back was never activated (zero occurrences in billions of draws). Therefore, it had no effect on the calibrated null distribution or benchmark results.
+In the Monte Carlo calibration runs used for the null Beta-mixture fits (for p-values) and the bivariate-Gaussian benchmarks, fold-back was never activated (zero occurrences in billions of draws). Therefore, it had no effect on the calibrated null distribution or benchmark results.
     
 Alternative stabilizations (e.g., Harrell–Davis quantile estimator per anchor, or Monte Carlo/permutation-based bias correction) can only reduce overshoot frequency and magnitude, but they materially change Λ and its null behavior; fold-back is used as a simple, deterministic guardrail.
 
@@ -244,69 +244,80 @@ Shown are rank configurations that produce the largest observed *untransformed* 
 
 ## Properties of $\Lambda_s$
 
-- **Range:** $\mathbf{\Lambda_s}$ ∈ \([-1,1]\).
-- **Symmetric:** $\mathbf{\Lambda_s}(x,y)$ == $\mathbf{\Lambda_s}(y,x)$.
-- **Invariant under strictly monotone transforms:** $\Lambda_s(x, y)$ is unchanged under $x \mapsto f(x)$ or $y \mapsto g(y)$ for any strictly monotone functions $f, g$.
+- **Range:** $\mathbf{\Lambda_s}$ **∈** \([-1,1]\).
+- **Symmetric:** $\mathbf{\Lambda_s}(x,y)$ **==** $\mathbf{\Lambda_s}(y,x)$.
+- **Invariant under strictly monotone transforms:** $\mathbf{\Lambda_s}(x,y)$ is unchanged under $x \mapsto f(x)$ or $y \mapsto g(y)$ for any strictly monotone functions $f, g$.
 - **Robust: Very robust to outliers and noise**; extremely high sign-breakdown 
                   point (median-of-slopes core) with adversarial contamination
                   (see [/results/\*Robustness\*.png](/results)).
-- **Less biased:** Much less biased than Spearman or Kendall relative to Pearson without transforms
+- **Less biased: Much less biased than Spearman or Kendall relative to Pearson**
                   (see [/results/\*bias\*.png](/results)).
 - **Accurate: Competitive or superior in accuracy** for moderate–strong signals.
-- **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with var_opt/var($\mathbf{\Lambda_s}$) = (1/N)/(1.112^2/N).
+- **Efficiency:** Asymptotic efficiency ~81% (ρ, τ ≈ 91%) with **var_opt/var(**$\mathbf{\Lambda_s}$**) = (1/N)/(1.112^2/N)**.
                   (Siegel median of medians slope is ~41%). 
                   See [/results/\*efficiency\*.png](/results) and [/results/\*power\*.png](/results)
-- **Null distribution:** centered, symmetric, slightly heavier tails than Spearman.
-- **Fast asymptotic:** Converges rapidly; within < 1% of the asymptotic null
-  distribution by n ≈ 300 and essentially asymptotic for n ≳ 1000 (see [/tests/find_limit.py](/tests/find_limit.py)).
+- **Null distribution:** centered, symmetric, slightly heavier tails than Spearman. Beta-mixture null 
+                  model for |Λ_s| with point masses at 0 and ±1 (Beta on (0,1) and a mirrored Beta on (-1, 0)).
 
 ---
 
 ## Notes on the Non-Canonical Repeated-Average Correlations
-- A fully repeated-median Λ has maximal robustness but reduced asymptotic efficiency, while the mean-of-medians $\mathbf{\Lambda_s}$ recovers much of the efficiency at minimal loss of breakdown.
-- A mean-of-means Λ is Theil-Sen in rank-space and is essentially Spearman in both efficiency and null spread, but gives up most of the robustness advantage compared to the mean of medians.
-- Continuum of Λ variants' behavior (outside loop - inside loop):
+- A fully **repeated-median Λ** has maximal robustness but reduced asymptotic efficiency, while the **mean-of-medians** $\mathbf{\Lambda_s}$ recovers much of the efficiency at minimal loss of breakdown.
+- A **mean-of-means Λ** is Theil-Sen in rank-space and is essentially Spearman in both efficiency and null spread, but gives up most of the robustness advantage compared to the mean of medians.
+- Continuum of **Λ** variants' behavior (outside loop - inside loop):
 
   Spearman (ρ) ≈ $\mathbf{\Lambda_s}^{(mean-mean)}$  <->  $[\mathbf{\Lambda_s}^{(mean-median)}]$  <-> $\mathbf{\Lambda_s}^{(median-mean)}$  <->  $\mathbf{\Lambda_s}^{(median-median)}$ ≈ Siegel's slope
   
-  Canonical choice: $\mathbf{\Lambda_s}^{(mean-median)}$ — best efficiency/robustness balance (especially at low statistics).
+  **Canonical choice:** $\mathbf{\Lambda_s}^{(mean-median)}$ — best efficiency/robustness balance (especially at low statistics).
 
 ---
 
 ## p-values
-
-Lambda supports three p-value modes:
-
+`lambda_corr` supports three p-value modes. In all cases, if `ties=False` and `n ≤ 10`, an **exact lookup table** is used for the symmetric statistic $\mathbf{\Lambda_s}$ regardless of `ptype`.  
+P-values for the asymmetric components ($\mathbf{\Lambda_{xy}}$, $\mathbf{\Lambda_{yx}}$) are returned **only** when a permutation test is used; otherwise **NaN** is returned for asymmetric p-values.
+ 
 ### `ptype="default"` (recommended)
-- **n < 25** → Monte Carlo **permutation test**.
-- **n ≥ 25** → **asymptotic Edgeworth approximation**.
+- Changes behavior based on **ties** keyword.
+- **ties=True** → Monte Carlo **permutation test**. P-values for $\mathbf{\Lambda_s}$, $\mathbf{\Lambda_{xy}}$, $\mathbf{\Lambda_{yx}}$ are returned.
+- **n ≤ 10** → **Exact p-value** for $\mathbf{\Lambda_s}$ if `ties=False` (default); otherwise Monte Carlo **permutation test**.
+- **n > 10** and `ties=False` → **Beta-mixture null model approximation** for **Λ_s**. Asymmetric p-values are **NaN**.
 
 ### `ptype="perm"`
-- Monte Carlo permutation p-values.
-- Valid with **ties or arbitrary marginals** (conditional, see below).
+- Uses a Monte Carlo **permutation test** (all `n`).
+  Special case: if `ties=False` and `n ≤ 10`, $\mathbf{\Lambda_s}$ uses the **exact lookup table**.
+- Returns p-values for $\mathbf{\Lambda_s}$, $\mathbf{\Lambda_{xy}}$, $\mathbf{\Lambda_{yx}}$.
+- Valid with **ties or arbitrary marginals** (conditional null; see below).
 - Early stopping when p-uncertainty < `p_tol`.
-- Fresh RNG drawn every call so permutation p-values vary across runs. 
-  This can give the user an idea of the p-value uncertainty, if they wish.
+- This calculation is **stochastic**, so permutation p-values vary across runs. Re-running can help the user gauge Monte Carlo uncertainty, if desired.
 
-### `ptype="asymp"`
-- **Fast** asymptotic p-values.
-- Best for low ties or larger n. More ties -- less accurate (conditional, see below).
-- Calibrated from very large unconditional Monte Carlo null distributions.
+### `ptype="approx"`
+- **n ≤ 10** → **Exact lookup table** for $\mathbf{\Lambda_s}$. This is only an exact p-value if there are no ties.
+- **n > 10** → **Fast** approximate p-values for $\mathbf{\Lambda_s}$.
+- Directional components **Λ_xy** and **Λ_yx** are returned as NaN as they require permutation for valid p-values.
+- Assumes no ties; accuracy degrades as tie frequency increases.
+- Approximate p-value from an **n-dependent Beta-mixture unconditional null** for |$\mathbf{\Lambda_s}$| with point masses at 0 and ±1 and a Beta fit on (0,1). Model parameters *(p0(n), p1(n), α(n), β(n))* are calibrated from extremely large Monte Carlo null simulations (`n`>11) at increasing sample sizes, parametrically interpolated (`n`>30) for intermediate values, and extrapolated for large samples (`n`>1000). 
 
-The permutation test samples from the *conditional* null distribution, generated 
-by permuting the observed y-values while keeping x fixed. This distribution 
-depends directly on the observed marginal distributions and tie structure. 
-Therefore, when the *underlying population is genuinely discrete*, the permutation 
-method can be more accurate because it automatically reflects the correct amount 
-and pattern of ties.
+The permutation test samples from the *conditional* null distribution, generated by permuting the observed `y` values while keeping `x` fixed. This distribution depends directly on the observed marginals and tie structure. Therefore, when the *underlying population is genuinely discrete*, the permutation method can be more accurate because it automatically reflects the correct amount and pattern of ties.
 
-In contrast, the asymptotic p-values approximate the *unconditional* null distribution 
-of Λ, calibrated from extremely large Monte Carlo simulations. As a result, they 
-tend to be more stable and often more accurate for moderate–large n, especially 
-when the *underlying population is continuous* (even if the sample exhibits ties 
-due to rounding, censoring, or finite precision) or when the data are skewed.
+In contrast, the approximate p-values target an *unconditional* null distribution for **Λ_s**, calibrated from extremely large Monte Carlo simulations under continuous no-tie assumptions. As a result, they tend to be more stable (and often more accurate) for moderate–large `n`, especially when the *underlying population is continuous* (even if the sample exhibits ties due to rounding, censoring, or finite precision).
 
-### Returned values
+Repeated points for emphasis:
+- `p_xy` and `p_yx` are returned only when a permutation test is run; otherwise they are NaN.
+- In `ptype="perm"` with `ties=False` and `n ≤ 10`, the code still runs permutations, but `p_s` is replaced by the exact lookup value.
+- `ptype="approx"` assumes no ties; if ties are present, results may be biased (especially for small `n`).
+
+### Summary Table (p-values)
+
+| Condition              | `ptype="default"`                 | `ptype="approx"`                       | `ptype="perm"`                      |
+|---|---|---|---|
+| `ties=True`, `n ≤ 10`  | permutation (p_s, p_yx, p_xy)     | table p_s (not exact); p_yx/p_xy = NaN | permutation (p_s, p_yx, p_xy)       |
+| `ties=True`, `n > 10`  | permutation (p_s, p_yx, p_xy)     | Beta-mixture p_s; p_yx/p_xy = NaN      | permutation (p_s, p_yx, p_xy)       |
+| `ties=False`, `n ≤ 10` | exact p_s; p_yx/p_xy = NaN        | exact p_s; p_yx/p_xy= NaN              | exact p_s; permutation (p_yx, p_xy) |
+| `ties=False`, `n > 10` | Beta-mixture p_s; p_yx/p_xy = NaN | Beta-mixture p_s; p_yx/p_xy = NaN      | permutation (p_s, p_yx, p_xy)       |
+
+---
+
+## Returned Values
 ```
 Lambda_s, p_s, Lambda_yx, p_yx, Lambda_xy, p_xy, Lambda_a
 ```
@@ -357,9 +368,10 @@ Requirements:
 - Numba ≥ 0.61
 - SciPy ≥ 1.9 (only needed for some validation tests)
 
+---
+
 ## Quick Example
-Compute the symmetric Lambda correlation **$\mathbf{\Lambda_s}$** and its directional components
-for a simple monotonic relationship:
+Compute the symmetric Lambda correlation **$\mathbf{\Lambda_s}$** and its directional components for a simple monotonic relationship:
 ```python
 
 import numpy as np
@@ -395,6 +407,13 @@ print(f"Asymmetry = {Lambda_a: .4f}")
 
 ```
 
+## Extended Example
+Code in [`example/`](./example/) shows how to apply my Telescope Array analysis,
+“Evidence for a Supergalactic Structure of Magnetic Deflection Multiplets of Ultra-high-energy Cosmic Rays”
+([arXiv:2005.07312v2](https://arxiv.org/abs/2005.07312v2)) to [Pierre Auger Observatory public data](https://opendata.auger.org/) using the $\mathbf{\Lambda_s}$ correlation.
+
+---
+
 ## References
 [1] Spearman, C. The proof and measurement of association between two things. 
       American Journal of Psychology, 15(1), 72–101, 1904.
@@ -406,6 +425,8 @@ print(f"Asymmetry = {Lambda_a: .4f}")
 
 [4]Siegel, A.F., Robust Regression Using Repeated Medians, Biometrika, 
       Vol. 69, pp. 242-244, 1982.
+
+---
 
 ## Citation
 If you use lambda_corr in academic or scientific work, please cite:

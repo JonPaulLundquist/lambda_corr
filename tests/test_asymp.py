@@ -10,7 +10,7 @@ Created on Tue Dec  2 18:56:16 2025
 
 import numpy as np
 import math
-import lambda_corr
+from lambda_corr import lambda_corr
 
 
 def draw_bivariate_normal(n, rho, rng):
@@ -20,7 +20,7 @@ def draw_bivariate_normal(n, rho, rng):
     return x, y
 
 def compare_lambda_pvals(n=30, rho=0.0, M=2000, 
-                         B_perm=10000, seed=12345,
+                         n_perm=10000, seed=12345,
                          alpha=0.05):
     """
     Monte Carlo comparison of permutation vs asymptotic p-values for Λ_s.
@@ -28,7 +28,7 @@ def compare_lambda_pvals(n=30, rho=0.0, M=2000,
     n      : sample size
     rho    : true Pearson correlation for the generator
     M      : number of Monte Carlo replications
-    B_perm : number of permutations in lambda_corr (ptype='perm')
+    n_perm : number of permutations in lambda_corr (ptype='perm')
     alpha  : significance level for rejection-rate comparison
     """
 
@@ -46,7 +46,7 @@ def compare_lambda_pvals(n=30, rho=0.0, M=2000,
             x, y,
             pvals=True,
             ptype="perm",
-            B=B_perm,
+            n_perm=n_perm,
             alt="two-sided"
         )
 
@@ -80,7 +80,7 @@ def compare_lambda_pvals(n=30, rho=0.0, M=2000,
         "n": n,
         "rho": rho,
         "M": M,
-        "B_perm": B_perm,
+        "n_perm": n_perm,
         "alpha": alpha,
         "mean_p_perm": float(p_perm.mean()),
         "mean_p_asymp": float(p_asymp.mean()),
@@ -94,7 +94,7 @@ def compare_lambda_pvals(n=30, rho=0.0, M=2000,
     return summary, p_perm, p_asymp, lambda_s_vals
 
 summary, p_perm, p_asymp, lambda_s_vals = compare_lambda_pvals(
-    n=30, rho=0.0, M=5000, B_perm=10000
+    n=30, rho=0.0, M=5000, n_perm=10000
 )
 
 print(summary)
